@@ -77,9 +77,14 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                 PKLog.verbose("\(String(describing: response.data))")
                 guard let data = response.data as? [String: Any] else { return }
                 guard let result = data["result"] as? [String: Any] else { return }
-                guard let errorData = result["error"] as? [String: Any] else { return }
-                guard let errorCode = errorData["code"] as? Int, errorCode == 4001 else { return }
-                self.reportConcurrencyEvent()
+                guard let ottError = result["error"] as? OTTError else { return }
+                
+                switch ottError.code {
+                case "4001":
+                    self.reportConcurrencyEvent()
+                default:
+                    self.reportBookmarkErrorEvent(code: ottError.code, message: ottError.message)
+                }
             }
         }
         

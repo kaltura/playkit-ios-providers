@@ -195,6 +195,10 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     func reportConcurrencyEvent() {
         self.messageBus?.post(OttEvent.Concurrency())
     }
+    
+    func reportBookmarkErrorEvent(code: String?, message: String?) {
+        self.messageBus?.post(OttEvent.BookmarkError(code: code, message: message))
+    }
 }
 
 /************************************************************/
