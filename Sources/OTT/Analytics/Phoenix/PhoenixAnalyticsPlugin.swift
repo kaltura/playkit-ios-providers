@@ -77,7 +77,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                 PKLog.verbose("\(String(describing: response.data))")
                 guard let data = response.data as? [String: Any] else { return }
                 guard let result = data["result"] as? [String: Any] else { return }
-                guard let ottError = result["error"] as? OTTError else { return }
+                guard let ottError = OTTError(json: result) else { return }
                 
                 switch ottError.code {
                 case "4001":

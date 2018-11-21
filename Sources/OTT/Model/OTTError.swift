@@ -15,10 +15,12 @@ class OTTError: OTTBaseObject {
 
     var message: String?
     var code: String?
+    var objectType: String?
 
     let errorKey = "error"
     let messageKey = "message"
     let codeKey = "code"
+    let objectTypeKey = "objectType"
 
     required init?(json: Any) {
 
@@ -26,5 +28,6 @@ class OTTError: OTTBaseObject {
         let errorDict = jsonObj[errorKey]
         self.message = errorDict[messageKey].string
         self.code = errorDict[codeKey].string
+        self.objectType = errorDict[objectTypeKey].string
     }
 }
