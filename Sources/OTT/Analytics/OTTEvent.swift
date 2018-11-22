@@ -14,12 +14,13 @@ import PlayKit
 /// OTT Event
 public class OttEvent : PKEvent {
     
+    static let codeKey = "code"
+    static let messageKey = "message"
+    
     class Concurrency : OttEvent {}
     /// represents the Concurrency event Type.
     /// Concurrency events fire when more then the allowed connections are exceeded.
-    public static let concurrency: OttEvent.Type = Concurrency.self
-    
-    static let messageKey = "message"
+    public static let concurrency: OttEvent.Type = OttEvent.Concurrency.self
     
     class Report: OttEvent {
         convenience init(message: String) {
@@ -28,6 +29,14 @@ public class OttEvent : PKEvent {
     }
     
     @objc public static let report: OttEvent.Type = OttEvent.Report.self
+    
+    class BookmarkError : OttEvent {
+        convenience init(code: String?, message: String?) {
+            self.init([OttEvent.codeKey: code ?? "", OttEvent.messageKey: message ?? ""])
+        }
+    }
+    
+    @objc public static let bookmarkError: OttEvent.Type = OttEvent.BookmarkError.self
 }
 
 extension PKEvent {
