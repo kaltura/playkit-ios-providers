@@ -11,7 +11,7 @@
 import UIKit
 import SwiftyJSON
 import KalturaNetKit
-
+import PlayKit
 
 extension KalturaRequestBuilder {
     
@@ -35,14 +35,14 @@ extension KalturaRequestBuilder {
     
     @discardableResult
     internal func setOTTBasicParams() -> Self {
-        self.setClientTag(clientTag: "java:16-09-10")
-        self.setApiVersion(apiVersion: "3.6.1078.11798")
+        self.setClientTag(clientTag: PlayKitManager.clientTag)
+        self.setApiVersion(apiVersion: "5.0.3.18074")
         return self
     }
     
     @discardableResult
     internal func setOVPBasicParams() -> Self {
-        self.setClientTag(clientTag: "playkit")
+        self.setClientTag(clientTag: PlayKitManager.clientTag)
         self.setApiVersion(apiVersion: "3.3.0")
         self.setFormat(format: 1)
         return self
