@@ -33,6 +33,8 @@ class OTTObjectMapper: NSObject {
                 return OTTMediaFile.self
             case "KalturaMultilingualStringValue":
                 return OTTMultilingualStringValue.self
+            case "KalturaLiveAsset":
+                return OTTLiveAsset.self
             default:
                 return nil
             }
