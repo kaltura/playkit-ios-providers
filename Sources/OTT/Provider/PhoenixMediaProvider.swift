@@ -565,6 +565,10 @@ public enum PhoenixMediaProviderError: PKError {
             mediaEntry.tags = tags
         }
         
+        if let _ = asset as? OTTLiveAsset  {
+            mediaEntry.mediaType = .live
+        }
+        
         return (mediaEntry, nil)
     }
     
