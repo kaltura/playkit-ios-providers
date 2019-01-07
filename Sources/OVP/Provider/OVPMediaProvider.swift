@@ -290,6 +290,11 @@ import PlayKit
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = entry.tags
                     mediaEntry.mediaType = self.mediaType(of: entry.entryType())
+
+                    if let liveEntry = entry as? OVPLiveStreamEntry, liveEntry.dvrStatus == true {
+                        mediaEntry.mediaType = .dvrLive
+                    }
+                    
                     callback(mediaEntry, nil)
                 })
             
