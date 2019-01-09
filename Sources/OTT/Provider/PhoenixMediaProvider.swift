@@ -569,6 +569,10 @@ public enum PhoenixMediaProviderError: PKError {
             mediaEntry.mediaType = .live
         }
         
+        if loaderInfo.assetType == .epg && loaderInfo.playbackContextType == .startOver {
+            mediaEntry.mediaType = .dvrLive
+        }
+        
         return (mediaEntry, nil)
     }
     

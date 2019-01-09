@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/**/*'
   
-  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.7.0' + suffix
+  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.8.0' + suffix
     
   s.dependency 'KalturaNetKit'
   s.dependency 'PlayKitUtils'

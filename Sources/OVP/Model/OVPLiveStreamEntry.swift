@@ -21,6 +21,6 @@ class OVPLiveStreamEntry: OVPEntry {
         super.init(json: json)
         
         let jsonObject = JSON(json)
-        self.dvrStatus = jsonObject[dvrStatusKey].bool
+        self.dvrStatus = Bool(exactly: jsonObject[dvrStatusKey].numberValue)
     }
 }
