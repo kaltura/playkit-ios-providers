@@ -287,6 +287,7 @@ import PlayKit
                     let metaDataItems = self.getMetadata(metadataList: metadataList)
                 
                     let mediaEntry: PKMediaEntry = PKMediaEntry(entry.id, sources: mediaSources, duration: entry.duration)
+                    mediaEntry.name = entry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = entry.tags
                     mediaEntry.mediaType = self.mediaType(of: entry.entryType())

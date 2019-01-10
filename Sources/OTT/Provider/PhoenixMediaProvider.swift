@@ -559,6 +559,7 @@ public enum PhoenixMediaProviderError: PKError {
         }
         
         let mediaEntry = PKMediaEntry(loaderInfo.assetId, sources: mediaSources, duration: TimeInterval(maxDuration))
+        mediaEntry.name = asset?.name
         
         let metadata = asset?.arrayOfMetas()
         if let tags = metadata?["tags"] {
