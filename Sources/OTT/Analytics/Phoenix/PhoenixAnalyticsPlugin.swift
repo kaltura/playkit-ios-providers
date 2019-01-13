@@ -49,14 +49,18 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     /************************************************************/
     
     override func buildRequest(ofType type: OTTAnalyticsEventType) -> Request? {
-       
+        guard !config.ks.isEmpty else {
+            PKLog.verbose("Analytics not sent, ks is empty.")
+            return nil
+        }
+        
         var currentTime: Int32 = 0
         
         if type == .stop {
             currentTime = self.lastPosition
         } else {
             guard let player = self.player else {
-                PKLog.error("send analytics failed due to nil associated player")
+                PKLog.error("Send analytics failed due to nil associated player.")
                 return nil
             }
             
