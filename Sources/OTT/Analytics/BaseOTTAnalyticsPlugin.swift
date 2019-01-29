@@ -67,7 +67,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     
     public var observations: Set<NotificationObservation> {
         return [
-            NotificationObservation(name: .UIApplicationWillTerminate) { [unowned self] in
+            NotificationObservation(name: UIApplication.willTerminateNotification) { [unowned self] in
                 PKLog.debug("plugin: \(self) will terminate event received, sending analytics stop event")
                 self.destroy()
             }
