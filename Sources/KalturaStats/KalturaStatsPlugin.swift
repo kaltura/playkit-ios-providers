@@ -172,7 +172,7 @@ public class KalturaStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
                 })
             case let e where e.self == PlayerEvent.seeked:
                 self.messageBus?.addObserver(self, events: [e.self], block: { [weak self] (event) in
-                    guard let strongSelf = self, let player = self?.player else { return }
+                    guard let strongSelf = self, let player = strongSelf.player else { return }
                     PKLog.debug("seeked event: \(event)")
                     strongSelf.hasSeeked = true
                     strongSelf.seekPercent = Float(player.currentTime) / Float(player.duration)

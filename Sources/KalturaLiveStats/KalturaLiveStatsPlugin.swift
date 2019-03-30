@@ -133,7 +133,7 @@ public class KalturaLiveStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
             switch event {
             case let e where e.self == PlayerEvent.play:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self, let player = self?.player else { return }
+                    guard let strongSelf = self, let player = strongSelf.player else { return }
                     strongSelf.lastReportedStartTime = player.currentTime.toInt32()
                     strongSelf.startLiveEvents()
                 }
@@ -213,9 +213,10 @@ public class KalturaLiveStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
             t.invalidate()
         }
         self.timer = PKTimer.every(self.interval) { [weak self] _ in
-            self?.sendLiveEvent(withBufferTime: self?.bufferTime ?? 0)
-            self?.eventIdx += 1
-            PKLog.debug("current time: \(String(describing: self?.player?.currentTime)), duration: \(String(describing: self?.player?.duration))")
+            guard let strongSelf = self else { return }
+            strongSelf.sendLiveEvent(withBufferTime: strongSelf.bufferTime)
+            strongSelf.eventIdx += 1
+            PKLog.debug("current time: \(String(describing: strongSelf.player?.currentTime)), duration: \(String(describing: strongSelf.player?.duration))")
         }
     }
     

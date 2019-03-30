@@ -67,9 +67,11 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     
     public var observations: Set<NotificationObservation> {
         return [
-            NotificationObservation(name: .UIApplicationWillTerminate) { [unowned self] in
-                PKLog.debug("plugin: \(self) will terminate event received, sending analytics stop event")
-                self.destroy()
+            NotificationObservation(name: UIApplication.willTerminateNotification) { [weak self] in
+                guard let strongSelf = self else { return }
+                
+                PKLog.debug("plugin: \(strongSelf) will terminate event received, sending analytics stop event")
+                strongSelf.destroy()
             }
         ]
     }
@@ -214,8 +216,9 @@ extension BaseOTTAnalyticsPlugin {
         }
         
         self.timer = PKTimer.every(self.interval) { [weak self] _ in
+            guard let strongSelf = self else { return }
             PKLog.debug("timerHit")
-            self?.sendProgressEvent()
+            strongSelf.sendProgressEvent()
         }
     }
     
