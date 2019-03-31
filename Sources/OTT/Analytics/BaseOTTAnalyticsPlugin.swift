@@ -68,10 +68,10 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     public var observations: Set<NotificationObservation> {
         return [
             NotificationObservation(name: UIApplication.willTerminateNotification) { [weak self] in
-                guard let strongSelf = self else { return }
+                guard let self = self else { return }
                 
-                PKLog.debug("plugin: \(strongSelf) will terminate event received, sending analytics stop event")
-                strongSelf.destroy()
+                PKLog.debug("plugin: \(self) will terminate event received, sending analytics stop event")
+                self.destroy()
             }
         ]
     }
@@ -102,61 +102,61 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
             switch event {
             case let e where e.self == PlayerEvent.ended:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.timer?.invalidate()
-                    strongSelf.lastPosition = strongSelf.player?.currentTime.toInt32() ?? strongSelf.lastPosition
-                    strongSelf.sendAnalyticsEvent(ofType: .finish)
+                    guard let self = self else { return }
+                    self.timer?.invalidate()
+                    self.lastPosition = self.player?.currentTime.toInt32() ?? self.lastPosition
+                    self.sendAnalyticsEvent(ofType: .finish)
                 }
             case let e where e.self == PlayerEvent.error:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.sendAnalyticsEvent(ofType: .error)
+                    guard let self = self else { return }
+                    self.sendAnalyticsEvent(ofType: .error)
                 }
             case let e where e.self == PlayerEvent.pause:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     // invalidate timer when receiving pause event only after first play
                     // and set intervalOn to false in order to start timer again on play event.
-                    if !strongSelf.isFirstPlay {
-                        strongSelf.timer?.invalidate()
-                        strongSelf.intervalOn = false
+                    if !self.isFirstPlay {
+                        self.timer?.invalidate()
+                        self.intervalOn = false
                     }
-                    strongSelf.sendAnalyticsEvent(ofType: .pause)
+                    self.sendAnalyticsEvent(ofType: .pause)
                 }
             case let e where e.self == PlayerEvent.stopped:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.cancelTimer()
-                    strongSelf.sendAnalyticsEvent(ofType: .stop)
+                    guard let self = self else { return }
+                    self.cancelTimer()
+                    self.sendAnalyticsEvent(ofType: .stop)
                 }
             case let e where e.self == PlayerEvent.loadedMetadata:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.sendAnalyticsEvent(ofType: .load)
+                    guard let self = self else { return }
+                    self.sendAnalyticsEvent(ofType: .load)
                 }
             case let e where e.self == PlayerEvent.playing:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     
-                    if !strongSelf.intervalOn {
-                        strongSelf.createTimer()
-                        strongSelf.intervalOn = true
+                    if !self.intervalOn {
+                        self.createTimer()
+                        self.intervalOn = true
                     }
                     
-                    if strongSelf.isFirstPlay {
-                        strongSelf.isFirstPlay = false
-                        strongSelf.sendAnalyticsEvent(ofType: .first_play);
+                    if self.isFirstPlay {
+                        self.isFirstPlay = false
+                        self.sendAnalyticsEvent(ofType: .first_play);
                     } else {
-                        strongSelf.sendAnalyticsEvent(ofType: .play);
+                        self.sendAnalyticsEvent(ofType: .play);
                     }
                 }
             case let e where e.self == PlayerEvent.sourceSelected:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     guard let mediaSource = event.mediaSource else { return }
-                    strongSelf.fileId = mediaSource.id
-                    strongSelf.mediaId = strongSelf.player?.mediaEntry?.id
-                    strongSelf.lastPosition = 0
+                    self.fileId = mediaSource.id
+                    self.mediaId = self.player?.mediaEntry?.id
+                    self.lastPosition = 0
                 }
             default: assertionFailure("plugin \(type(of:self)) all events must be handled")
             }
@@ -216,9 +216,9 @@ extension BaseOTTAnalyticsPlugin {
         }
         
         self.timer = PKTimer.every(self.interval) { [weak self] _ in
-            guard let strongSelf = self else { return }
+            guard let self = self else { return }
             PKLog.debug("timerHit")
-            strongSelf.sendProgressEvent()
+            self.sendProgressEvent()
         }
     }
     

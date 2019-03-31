@@ -166,57 +166,57 @@ public class KalturaStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
             switch event {
             case let e where e.self == PlayerEvent.canPlay:
                 self.messageBus?.addObserver(self, events: [e.self], block: { [weak self] (event) in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     PKLog.debug("canPlay event: \(event)")
-                    strongSelf.sendMediaLoaded()
+                    self.sendMediaLoaded()
                 })
             case let e where e.self == PlayerEvent.seeked:
                 self.messageBus?.addObserver(self, events: [e.self], block: { [weak self] (event) in
-                    guard let strongSelf = self, let player = strongSelf.player else { return }
+                    guard let self = self, let player = self.player else { return }
                     PKLog.debug("seeked event: \(event)")
-                    strongSelf.hasSeeked = true
-                    strongSelf.seekPercent = Float(player.currentTime) / Float(player.duration)
-                    strongSelf.sendAnalyticsEvent(action: .seek)
+                    self.hasSeeked = true
+                    self.seekPercent = Float(player.currentTime) / Float(player.duration)
+                    self.sendAnalyticsEvent(action: .seek)
                 })
             case let e where e.self == PlayerEvent.playing:
                 self.messageBus?.addObserver(self, events: [e.self], block: { [weak self] (event) in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     PKLog.debug("play event: \(event)")
-                    if strongSelf.isFirstPlay {
-                        strongSelf.sendAnalyticsEvent(action: .play)
-                        strongSelf.isFirstPlay = false
+                    if self.isFirstPlay {
+                        self.sendAnalyticsEvent(action: .play)
+                        self.isFirstPlay = false
                     }
                 })
             case let e where e.self == PlayerEvent.error:
                 self.messageBus?.addObserver(self, events: [e.self], block: { [weak self] (event) in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     PKLog.debug("error event: \(event)")
-                    strongSelf.sendAnalyticsEvent(action: .error)
+                    self.sendAnalyticsEvent(action: .error)
                 })
             case let e where e.self == PlayerEvent.stateChanged:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     PKLog.debug("state changed event: \(event)")
                     if let stateChanged = event as? PlayerEvent.StateChanged {
                         switch stateChanged.newState {
                         case .idle:
-                            strongSelf.sendWidgetLoaded()
+                            self.sendWidgetLoaded()
                         case .ended:
                             PKLog.info("media ended")
                         case .ready:
-                            if strongSelf.isBuffering {
-                                strongSelf.isBuffering = false
-                                strongSelf.sendAnalyticsEvent(action: .bufferEnd)
+                            if self.isBuffering {
+                                self.isBuffering = false
+                                self.sendAnalyticsEvent(action: .bufferEnd)
                             }
-                            if !strongSelf.intervalOn {
-                                strongSelf.intervalOn = true
-                                strongSelf.createTimer()
+                            if !self.intervalOn {
+                                self.intervalOn = true
+                                self.createTimer()
                             }
-                            strongSelf.sendMediaLoaded()
+                            self.sendMediaLoaded()
                         case .buffering:
-                            strongSelf.sendWidgetLoaded()
-                            strongSelf.isBuffering = true
-                            strongSelf.sendAnalyticsEvent(action: .error)
+                            self.sendWidgetLoaded()
+                            self.isBuffering = true
+                            self.sendAnalyticsEvent(action: .error)
                         case .error: break
                         case .unknown: break
                         }
