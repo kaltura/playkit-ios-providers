@@ -133,47 +133,47 @@ public class KalturaLiveStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
             switch event {
             case let e where e.self == PlayerEvent.play:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self, let player = self?.player else { return }
-                    strongSelf.lastReportedStartTime = player.currentTime.toInt32()
-                    strongSelf.startLiveEvents()
+                    guard let self = self, let player = self.player else { return }
+                    self.lastReportedStartTime = player.currentTime.toInt32()
+                    self.startLiveEvents()
                 }
             case let e where e.self == PlayerEvent.playing:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.startLiveEvents()
+                    guard let self = self else { return }
+                    self.startLiveEvents()
                 }
             case let e where e.self == PlayerEvent.pause:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.stopLiveEvents()
+                    guard let self = self else { return }
+                    self.stopLiveEvents()
                 }
             case let e where e.self == PlayerEvent.error:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
-                    strongSelf.stopLiveEvents()
+                    guard let self = self else { return }
+                    self.stopLiveEvents()
                 }
             case let e where e.self == PlayerEvent.playbackInfo:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     if type(of: event) == PlayerEvent.playbackInfo && event.playbackInfo != nil {
-                        strongSelf.lastReportedBitrate = Int32(event.playbackInfo!.bitrate)
+                        self.lastReportedBitrate = Int32(event.playbackInfo!.bitrate)
                     }
                 }
             case let e where e.self == PlayerEvent.stateChanged:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
-                    guard let strongSelf = self else { return }
+                    guard let self = self else { return }
                     
                     if type(of: event) == PlayerEvent.stateChanged {
                         switch event.newState {
                         case .ready:
-                            strongSelf.createTimer()
-                            if strongSelf.isBuffering {
-                                strongSelf.isBuffering = false
-                                strongSelf.sendLiveEvent(withBufferTime: strongSelf.calculateBuffer(isBuffering: false))
+                            self.createTimer()
+                            if self.isBuffering {
+                                self.isBuffering = false
+                                self.sendLiveEvent(withBufferTime: self.calculateBuffer(isBuffering: false))
                             }
                         case .buffering:
-                            strongSelf.isBuffering = true
-                            strongSelf.bufferStartTime = Date().timeIntervalSince1970.toInt32()
+                            self.isBuffering = true
+                            self.bufferStartTime = Date().timeIntervalSince1970.toInt32()
                         default: break
                         }
                     }
@@ -213,9 +213,10 @@ public class KalturaLiveStatsPlugin: BasePlugin, AnalyticsPluginProtocol {
             t.invalidate()
         }
         self.timer = PKTimer.every(self.interval) { [weak self] _ in
-            self?.sendLiveEvent(withBufferTime: self?.bufferTime ?? 0)
-            self?.eventIdx += 1
-            PKLog.debug("current time: \(String(describing: self?.player?.currentTime)), duration: \(String(describing: self?.player?.duration))")
+            guard let self = self else { return }
+            self.sendLiveEvent(withBufferTime: self.bufferTime)
+            self.eventIdx += 1
+            PKLog.debug("current time: \(String(describing: self.player?.currentTime)), duration: \(String(describing: self.player?.duration))")
         }
     }
     
