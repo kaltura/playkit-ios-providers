@@ -129,6 +129,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
                     guard let self = self else { return }
                     self.cancelTimer()
+                    // If destory was already called, it may have sent stop. Don't send it again.
                     if !self.stopSentByDestroy {
                         self.sendAnalyticsEvent(ofType: .stop)
                     }
