@@ -25,6 +25,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     var lastPosition: Int32 = 0
     var periodicObserverUUID: UUID?
     var mediaId: String?
+    var stopSentByDestroy: Bool = false
 
     /************************************************************/
     // MARK: - PKPlugin
@@ -55,6 +56,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         // only send stop event if content started playing already & content is not ended
         if !self.isFirstPlay && self.player?.currentState != PlayerState.ended {
             self.sendAnalyticsEvent(ofType: .stop)
+            self.stopSentByDestroy = true
         }
         self.timer?.invalidate()
         AppStateSubject.shared.remove(observer: self)
@@ -127,7 +129,9 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
                     guard let self = self else { return }
                     self.cancelTimer()
-                    self.sendAnalyticsEvent(ofType: .stop)
+                    if !self.stopSentByDestroy {
+                        self.sendAnalyticsEvent(ofType: .stop)
+                    }
                 }
             case let e where e.self == PlayerEvent.loadedMetadata:
                 self.messageBus?.addObserver(self, events: [e.self]) { [weak self] event in
