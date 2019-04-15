@@ -488,13 +488,13 @@ public enum PhoenixMediaProviderError: PKError {
             .sorted { (source1: OTTPlaybackSource, source2: OTTPlaybackSource) -> Bool in
                 
                 if let formats = fileFormats {
-                    let index1 = formats.index(of: source1.type) ?? 0
-                    let index2 = formats.index(of: source2.type) ?? 0
+                    let index1 = formats.firstIndex(of: source1.type) ?? 0
+                    let index2 = formats.firstIndex(of: source2.type) ?? 0
                     return index1 < index2
                 } else if let  fileIds = fileIds {
                     
-                    let index1 = fileIds.index(of: "\(source1.id)") ?? 0
-                    let index2 = fileIds.index(of: "\(source2.id)") ?? 0
+                    let index1 = fileIds.firstIndex(of: "\(source1.id)") ?? 0
+                    let index2 = fileIds.firstIndex(of: "\(source2.id)") ?? 0
                     return index1 < index2
                 } else {
                     return false
