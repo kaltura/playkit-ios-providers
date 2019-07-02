@@ -161,6 +161,7 @@ import PlayKit
             
             let mrb = KalturaMultiRequestBuilder(url: loadInfo.apiServerURL)?.setOVPBasicParams()
             var ks: String? = nil
+            var baseEntryServiceEntryId = "{1:result:objects:0:id}"
             
             // checking if we got ks from the session, otherwise we should work as anonymous
             if let data = resKS, data.isEmpty == false {
@@ -173,6 +174,7 @@ import PlayKit
                     mrb?.add(request: req)
                     // changing the ks to this format in order to use it as a multi request ( forward from the first response )
                     ks = "{1:result:ks}"
+                    baseEntryServiceEntryId = "{2:result:objects:0:id}"
                 }
             }
             
@@ -191,12 +193,12 @@ import PlayKit
             // Request for Entry playback data in order to build sources to play
             let getPlaybackContext =  OVPBaseEntryService.getPlaybackContext(baseURL: loadInfo.apiServerURL,
                                                                              ks: token,
-                                                                             entryID: loadInfo.entryId,
+                                                                             entryID: baseEntryServiceEntryId,
                                                                              referrer: self.referrer)
             
             let metadataRequest = OVPBaseEntryService.metadata(baseURL: loadInfo.apiServerURL,
                                                                ks: token,
-                                                               entryID: loadInfo.entryId)
+                                                               entryID: baseEntryServiceEntryId)
             
             guard let req1 = listRequest, let req2 = getPlaybackContext, let req3 = metadataRequest else {
                 callback(nil, OVPMediaProviderError.invalidParams)
