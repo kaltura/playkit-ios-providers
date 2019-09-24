@@ -36,7 +36,7 @@ extension KalturaRequestBuilder {
     @discardableResult
     internal func setOTTBasicParams() -> Self {
         self.setClientTag(clientTag: PlayKitManager.clientTag)
-        self.setApiVersion(apiVersion: "5.0.3.18074")
+        self.setApiVersion(apiVersion: "5.2.4")
         return self
     }
     

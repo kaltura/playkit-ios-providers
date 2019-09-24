@@ -347,7 +347,7 @@ import PlayKit
             switch scheme {
             case .fairplay :
                 guard let certifictae = drm.certificate, let licenseURL = drm.licenseURL else { return nil }
-                drmData = FairPlayDRMParams(licenseUri: licenseURL, scheme:scheme, base64EncodedCertificate: certifictae)
+                drmData = FairPlayDRMParams(licenseUri: licenseURL, base64EncodedCertificate: certifictae)
             default:
                 drmData = DRMParams(licenseUri: drm.licenseURL, scheme: scheme)
             }

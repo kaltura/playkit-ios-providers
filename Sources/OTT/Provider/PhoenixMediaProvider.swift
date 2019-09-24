@@ -43,6 +43,7 @@ import PlayKit
     case media
     case epgInternal
     case epgExternal
+    case npvr
     case unset
     
     public var description: String {
@@ -50,6 +51,7 @@ import PlayKit
         case .media: return "media"
         case .epgInternal: return "epgInternal"
         case .epgExternal: return "epgExternal"
+        case .npvr: return "npvr"
         case .unset: return "<unset>"
         }
     }
@@ -537,7 +539,7 @@ public enum PhoenixMediaProviderError: PKError {
                         // if the scheme is type fair play and there is no certificate or license URL
                         guard let certifictae = drmData.certificate
                             else { return nil }
-                        return FairPlayDRMParams(licenseUri: drmData.licenseURL, scheme: scheme, base64EncodedCertificate: certifictae)
+                        return FairPlayDRMParams(licenseUri: drmData.licenseURL, base64EncodedCertificate: certifictae)
                     default:
                         return DRMParams(licenseUri: drmData.licenseURL, scheme: scheme)
                     }
@@ -614,6 +616,8 @@ public enum PhoenixMediaProviderError: PKError {
             return .epgInternal
         case .epgExternal:
             return .epgExternal
+        case .npvr:
+            return .npvr
         case .unset:
             return nil
         }
