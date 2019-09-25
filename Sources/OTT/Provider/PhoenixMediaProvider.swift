@@ -563,6 +563,8 @@ public enum PhoenixMediaProviderError: PKError {
         let mediaEntry = PKMediaEntry(loaderInfo.assetId, sources: mediaSources, duration: TimeInterval(maxDuration))
         mediaEntry.name = asset?.name
         
+        mediaEntry.metadata = createMetadata(from: asset)
+        
         let metadata = asset?.arrayOfMetas()
         if let tags = metadata?["tags"] {
             mediaEntry.tags = tags
@@ -577,6 +579,17 @@ public enum PhoenixMediaProviderError: PKError {
         }
         
         return (mediaEntry, nil)
+    }
+    
+    static func createMetadata(from asset: OTTMediaAsset?) -> [String: String] {
+        var metadata: [String: String] = asset?.arrayOfMetas() ?? [:]
+        
+        if let recordingAsset = asset as? OTTRecordingAsset {
+            metadata["recordingId"] = recordingAsset.recordingId
+            metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
+        }
+        
+        return metadata
     }
     
     // Mapping between server scheme and local definision of scheme
