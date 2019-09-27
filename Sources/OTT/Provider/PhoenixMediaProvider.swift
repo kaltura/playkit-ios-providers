@@ -192,7 +192,7 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter type: Asset Object type if it is Media Or EPG
+    /// - Parameter type: Asset Object type if it is EPG, Recording or Media
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(type: AssetType) -> Self {
@@ -316,6 +316,8 @@ public enum PhoenixMediaProviderError: PKError {
                 self.refType = .media   // default if type is media
             case .epg:
                 self.refType = .epgInternal
+            case .recording:
+                self.refType = .npvr
             default:
                 break
             }

@@ -10,11 +10,11 @@
 
 import Foundation
 
-
+//  0 – EPG linear programs; 1 - Recording; any asset type ID according to the asset types IDs defined in the system - Media.
 enum AssetTypeAPI: Int, CustomStringConvertible {
-    case media
     case epg
     case recording
+    case media
     
     var description: String {
         switch self {
