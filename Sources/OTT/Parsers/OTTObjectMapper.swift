@@ -27,14 +27,20 @@ class OTTObjectMapper: NSObject {
                 return OTTPlaybackSource.self
             case "KalturaPlaybackContext":
                 return OTTPlaybackContext.self
-            case "KalturaMediaAsset", "KalturaProgramAsset":
+            case "KalturaMediaAsset":
                 return OTTMediaAsset.self
+            case "KalturaProgramAsset":
+                return OTTProgramAsset.self
             case "KalturaMediaFile":
                 return OTTMediaFile.self
             case "KalturaMultilingualStringValue":
                 return OTTMultilingualStringValue.self
+            case "KalturaBooleanValue":
+                return OTTBooleanValue.self
             case "KalturaLiveAsset":
                 return OTTLiveAsset.self
+            case "KalturaRecordingAsset":
+                return OTTRecordingAsset.self
             default:
                 return nil
             }

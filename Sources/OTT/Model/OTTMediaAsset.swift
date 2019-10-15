@@ -25,14 +25,20 @@ fileprivate let mediaFilesKey = "mediaFiles"
 fileprivate let metasKey = "metas"
 
 public class OTTMediaAsset: OTTBaseObject {
-    // This class is for both KalturaMediaAsset and KalturaProgramAsset, because
-    // the fields we use are common between them.
     
+    /**  Unique identifier for the asset  */
     var id: Int?
+    /**  Identifies the asset type (EPG, Recording, Movie, TV Series, etc).
+    Possible values: 0 – EPG linear programs, 1 - Recording; or any asset type ID
+    according to the asset types IDs defined in the system.  */
     var type: Int?
+    /**  Asset name  */
     var name: String?
+    /**  Files  */
     var mediaFiles: [OTTMediaFile] = []
-    var metas: Dictionary<String, OTTBaseObject> = Dictionary()
+    /**  Dynamic collection of key-value pairs according to the String Meta defined in
+    the system  */
+    var metas: [String: OTTBaseObject] = [:]
     
     public required init?(json: Any) {
         let jsonObj: JSON = JSON(json)

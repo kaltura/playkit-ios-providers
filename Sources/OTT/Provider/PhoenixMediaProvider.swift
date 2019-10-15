@@ -43,6 +43,7 @@ import PlayKit
     case media
     case epgInternal
     case epgExternal
+    case npvr
     case unset
     
     public var description: String {
@@ -50,6 +51,7 @@ import PlayKit
         case .media: return "media"
         case .epgInternal: return "epgInternal"
         case .epgExternal: return "epgExternal"
+        case .npvr: return "npvr"
         case .unset: return "<unset>"
         }
     }
@@ -190,7 +192,7 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter type: Asset Object type if it is Media Or EPG
+    /// - Parameter type: Asset Object type if it is EPG, Recording or Media
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(type: AssetType) -> Self {
@@ -314,6 +316,8 @@ public enum PhoenixMediaProviderError: PKError {
                 self.refType = .media   // default if type is media
             case .epg:
                 self.refType = .epgInternal
+            case .recording:
+                self.refType = .npvr
             default:
                 break
             }
@@ -537,7 +541,7 @@ public enum PhoenixMediaProviderError: PKError {
                         // if the scheme is type fair play and there is no certificate or license URL
                         guard let certifictae = drmData.certificate
                             else { return nil }
-                        return FairPlayDRMParams(licenseUri: drmData.licenseURL, scheme: scheme, base64EncodedCertificate: certifictae)
+                        return FairPlayDRMParams(licenseUri: drmData.licenseURL, base64EncodedCertificate: certifictae)
                     default:
                         return DRMParams(licenseUri: drmData.licenseURL, scheme: scheme)
                     }
@@ -561,6 +565,8 @@ public enum PhoenixMediaProviderError: PKError {
         let mediaEntry = PKMediaEntry(loaderInfo.assetId, sources: mediaSources, duration: TimeInterval(maxDuration))
         mediaEntry.name = asset?.name
         
+        mediaEntry.metadata = createMetadata(from: asset)
+        
         let metadata = asset?.arrayOfMetas()
         if let tags = metadata?["tags"] {
             mediaEntry.tags = tags
@@ -575,6 +581,17 @@ public enum PhoenixMediaProviderError: PKError {
         }
         
         return (mediaEntry, nil)
+    }
+    
+    static func createMetadata(from asset: OTTMediaAsset?) -> [String: String] {
+        var metadata: [String: String] = asset?.arrayOfMetas() ?? [:]
+        
+        if let recordingAsset = asset as? OTTRecordingAsset {
+            metadata["recordingId"] = recordingAsset.recordingId
+            metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
+        }
+        
+        return metadata
     }
     
     // Mapping between server scheme and local definision of scheme
@@ -614,6 +631,8 @@ public enum PhoenixMediaProviderError: PKError {
             return .epgInternal
         case .epgExternal:
             return .epgExternal
+        case .npvr:
+            return .npvr
         case .unset:
             return nil
         }

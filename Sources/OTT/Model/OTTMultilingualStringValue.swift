@@ -8,12 +8,6 @@
 // https://www.gnu.org/licenses/agpl-3.0.html
 // ===================================================================================================
 
-//
-//  OTTMultilingualStringValue.swift
-//  PlayKit
-//
-//  Created by Nilit Danan on 8/20/18.
-//
 
 import Foundation
 import SwiftyJSON

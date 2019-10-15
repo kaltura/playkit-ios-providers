@@ -23,7 +23,7 @@ class OTTAssetService {
         return request
             .setBody(key: "assetId", value: JSON(assetId))
             .setBody(key: "ks", value: JSON(ks))
-            .setBody(key: "assetType", value: JSON(type.asString))
+            .setBody(key: "assetType", value: JSON(type.description))
             .setBody(key: "contextDataParams", value: JSON(playbackContextOptions.toDictionary()))
     }
     
@@ -36,7 +36,7 @@ class OTTAssetService {
         return request
             .setBody(key: "ks", value: JSON(ks))
             .setBody(key: "id", value: JSON(assetId))
-            .setBody(key: "assetReferenceType", value: JSON(refType.asString))
+            .setBody(key: "assetReferenceType", value: JSON(refType.description))
     }
 }
 
@@ -50,7 +50,7 @@ struct PlaybackContextOptions {
     func toDictionary() -> [String: Any] {
 
         var dict: [String: Any] = [:]
-        dict["context"] = playbackContextType.asString
+        dict["context"] = playbackContextType.description
         dict["mediaProtocols"] = protocls
         if let fileIds = self.assetFileIds {
             dict["assetFileIds"] = fileIds.joined(separator: ",")
