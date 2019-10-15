@@ -24,17 +24,30 @@ import KalturaNetKit
 import PlayKit
 
 @objc public enum AssetType: Int, CustomStringConvertible {
-    case media
     case epg
     case recording
+    case media
     case unset
     
     public var description: String {
         switch self {
-        case .media: return "media"
         case .epg: return "epg"
         case .recording: return "recording"
+        case .media: return "media"
         case .unset: return "<unset>"
+        }
+    }
+    
+    public init(_ serverValue: Int) {
+        switch serverValue {
+        case 0:
+            self = .epg
+        case 1:
+            self = .recording
+        case _ where serverValue > 1:
+            self = .media
+        default:
+            self = .unset
         }
     }
 }
@@ -589,6 +602,10 @@ public enum PhoenixMediaProviderError: PKError {
         if let recordingAsset = asset as? OTTRecordingAsset {
             metadata["recordingId"] = recordingAsset.recordingId
             metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
+        }
+        
+        if let type = asset?.type {
+            metadata["assetType"] = AssetType(type).description
         }
         
         return metadata

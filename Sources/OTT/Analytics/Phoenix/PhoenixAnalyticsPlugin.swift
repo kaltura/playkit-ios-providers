@@ -67,12 +67,18 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             currentTime = player.currentTime.toInt32()
         }
         
+        var assetType = ""
+        if let metadata = self.player?.mediaEntry?.metadata, let type = metadata["assetType"] {
+            assetType = type
+        }
+        
         guard let requestBuilder: KalturaRequestBuilder = BookmarkService.actionAdd(baseURL: config.baseUrl,
                                                                                     partnerId: config.partnerId,
                                                                                     ks: config.ks,
                                                                                     eventType: type.rawValue.uppercased(),
                                                                                     currentTime: currentTime,
                                                                                     assetId: mediaId ?? "",
+                                                                                    assetType: assetType,
                                                                                     fileId: fileId ?? "") else { return nil }
         
         requestBuilder.set { (response: Response) in
