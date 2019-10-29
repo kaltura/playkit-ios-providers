@@ -159,7 +159,8 @@ import PlayKit
         
         loadInfo.sessionProvider.loadKS { (resKS, error) in
             
-            let mrb = KalturaMultiRequestBuilder(url: loadInfo.apiServerURL)?.setOVPBasicParams()
+            let mrb: KalturaMultiRequestBuilder? = KalturaMultiRequestBuilder(url: loadInfo.apiServerURL)?.setOVPBasicParams()
+            
             var ks: String? = nil
             var baseEntryServiceEntryId = "{1:result:objects:0:id}"
             
@@ -210,6 +211,8 @@ import PlayKit
                 .add(request: req2)
                 .add(request: req3)
                 .set(completion: { (dataResponse: Response) in
+                    
+                    PKLog.debug("Response:\nStatus Code: \(dataResponse.statusCode)\nError: \(dataResponse.error?.localizedDescription ?? "")\nData: \(dataResponse.data ?? "")")
                     
                     guard let data = dataResponse.data else {
                         PKLog.debug("didn't get response data")
@@ -302,6 +305,7 @@ import PlayKit
                 })
             
             if let request = mrb?.build() {
+                PKLog.debug("Sending requests: \(mrb?.description ?? "")")
                 loadInfo.executor.send(request: request)
             } else {
                 callback(nil, OVPMediaProviderError.invalidParams)
