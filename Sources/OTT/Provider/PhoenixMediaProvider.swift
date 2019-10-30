@@ -341,14 +341,13 @@ public enum PhoenixMediaProviderError: PKError {
         
         let loaderParams = LoaderInfo(sessionProvider: sessionProvider,
                                       assetId: assetId,
-                                      
                                       assetType: self.toAPIType(type: self.type),
                                       assetRefType: self.toAPIType(type: self.refType),
                                       playbackContextType: self.toAPIType(type: self.playbackContextType),
-                                      
-                                      formats: self.formats, fileIds: self.fileIds,
-                                      
-                                      networkProtocol: pr, executor: executor)
+                                      formats: self.formats,
+                                      fileIds: self.fileIds,
+                                      networkProtocol: pr,
+                                      executor: executor)
         
         self.startLoad(loaderInfo: loaderParams, callback: callback)
     }
@@ -423,7 +422,9 @@ public enum PhoenixMediaProviderError: PKError {
                 return
             }
             
-            let request = multiRequestBuilder.set(completion: { (response: Response) in
+            let request: Request = multiRequestBuilder.set(completion: { (response: Response) in
+                
+                PKLog.debug("Response:\nStatus Code: \(response.statusCode)\nError: \(response.error?.localizedDescription ?? "")\nData: \(response.data ?? "")")
                 
                 if let delegate = self.responseDelegate {
                     delegate.providerGotResponse(sender: self, response: response)
@@ -486,6 +487,7 @@ public enum PhoenixMediaProviderError: PKError {
                 }
             }).build()
             
+            PKLog.debug("Sending requests: \(multiRequestBuilder.description)")
             loaderInfo.executor.send(request: request)
         }
     }
