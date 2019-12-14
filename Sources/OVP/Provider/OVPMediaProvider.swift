@@ -214,8 +214,15 @@ import PlayKit
                     
                     PKLog.debug("Response:\nStatus Code: \(dataResponse.statusCode)\nError: \(dataResponse.error?.localizedDescription ?? "")\nData: \(dataResponse.data ?? "")")
                     
+                    if let error = dataResponse.error {
+                        PKLog.debug("Got an error.")
+                        // If error is of type `PKError` pass it as `NSError` else pass the `Error` object.
+                        callback(nil, (error as? PKError)?.asNSError ?? error)
+                        return
+                    }
+                    
                     guard let data = dataResponse.data else {
-                        PKLog.debug("didn't get response data")
+                        PKLog.debug("Didn't get response data.")
                         callback(nil, OVPMediaProviderError.invalidResponse)
                         return
                     }
@@ -224,7 +231,7 @@ import PlayKit
                     
                     // At leat we need to get response of Entry and Playback, on anonymous we will have additional startWidgetSession call
                     guard responses.count >= 2 else {
-                        PKLog.debug("didn't get response for all requests")
+                        PKLog.debug("Didn't get response for all requests.")
                         callback(nil, OVPMediaProviderError.invalidResponse)
                         return
                     }
@@ -240,33 +247,35 @@ import PlayKit
                         let metadataListObject = metaData as? OVPList,
                         let metadataList = metadataListObject.objects as? [OVPMetadata]
                         else {
-                            PKLog.debug("Response is not containing Entry info or playback data")
+                            PKLog.debug("Response is not containing entry info or playback data.")
                             callback(nil, OVPMediaProviderError.invalidResponse)
                             return
                     }
                     
-                    if let context = contextDataResponse as? OVPPlaybackContext {
-                        if (context.hasBlockAction() != nil) {
-                            if let error = context.hasErrorMessage() {
-                                callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "",
-                                                                                message: error.message ?? ""))
-                            } else{
-                                callback(nil, OVPMediaProviderError.serverError(code: "Blocked", message: "Blocked"))
-                            }
-                            return
+                    if (contextData.hasBlockAction() != nil) {
+                        PKLog.debug("The context data has a blocked action.")
+                        if let error = contextData.hasErrorMessage() {
+                            callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "",
+                                                                            message: error.message ?? ""))
+                        } else {
+                            callback(nil, OVPMediaProviderError.serverError(code: "Blocked", message: "Blocked"))
                         }
+                        return
                     }
 
                     var mediaSources: [PKMediaSource] = [PKMediaSource]()
                     sources.forEach { (source: OVPSource) in
-                        //detecting the source type
+                        // Detecting the source type
                         let format = FormatsHelper.getMediaFormat(format: source.format, hasDrm: source.drm != nil)
-                        //If source type is not supported source will not be created
-                        guard format != .unknown else { return }
+                        // If source type is not supported, source will not be created
+                        guard format != .unknown else {
+                            PKLog.debug("Unknown format, discarding source:\(entry.id), \(source.deliveryProfileId)")
+                            return
+                        }
                         
                         var ksForURL = resKS
                         
-                        // retrieving the ks from the response of StartWidgetSession
+                        // Retrieving the ks from the response of StartWidgetSession
                         if responses.count > 2 {
                             if let widgetSession = responses[0] as? OVPStartWidgetSessionResponse {
                                 ksForURL = widgetSession.ks
@@ -275,13 +284,13 @@ import PlayKit
 
                         let playURL: URL? = self.playbackURL(entryId: entry.id, loadInfo: loadInfo, source: source, ks: ksForURL)
                         guard let url = playURL else {
-                            PKLog.error("failed to create play url from source, discarding source:\(entry.id),\(source.deliveryProfileId), \(source.format)")
+                            PKLog.error("Failed to create play url from source, discarding source:\(entry.id), \(source.deliveryProfileId), \(source.format)")
                             return
                         }
                         
                         let drmData = self.buildDRMParams(drm: source.drm)
                         
-                        //creating media source with the above data
+                        // Creating media source with the above data
                         let mediaSource: PKMediaSource = PKMediaSource(id: "\(entry.id)_\(String(source.deliveryProfileId))")
                         mediaSource.drmData = drmData
                         mediaSource.contentUrl = url

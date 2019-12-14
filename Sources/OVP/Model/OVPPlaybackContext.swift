@@ -35,7 +35,7 @@ class OVPPlaybackContext: OVPBaseObject {
         let sources = jsonObject[sourcesKey].array
         self.sources = [OVPSource]()
         sources?.forEach({ (sourceJson:JSON) in
-            if let source = OVPSource(json: sourceJson.object){
+            if let source = OVPSource(json: sourceJson.object) {
                 self.sources?.append(source)
             }
         })
@@ -56,7 +56,7 @@ class OVPPlaybackContext: OVPBaseObject {
     func hasErrorMessage() -> OVPAccessControlMessage? {
         
         for message in self.messages {
-            if (message.code != "OK"){
+            if (message.code != "OK") {
                 return message
             }
         }
@@ -67,7 +67,7 @@ class OVPPlaybackContext: OVPBaseObject {
     func hasBlockAction() -> OVPRuleAction? {
         
         for action in self.actions {
-            if (action.type == .block){
+            if (action.type == .block) {
                 return action
             }
         }
