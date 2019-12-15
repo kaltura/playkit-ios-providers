@@ -269,7 +269,6 @@ import PlayKit
                         let format = FormatsHelper.getMediaFormat(format: source.format, hasDrm: source.drm != nil)
                         // If source type is not supported, source will not be created
                         guard format != .unknown else {
-                            PKLog.debug("Unknown format, discarding source:\(entry.id), \(source.deliveryProfileId)")
                             return
                         }
                         
