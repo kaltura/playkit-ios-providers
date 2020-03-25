@@ -367,7 +367,7 @@ public enum PhoenixMediaProviderError: PKError {
         let multiRequestBuilder = KalturaMultiRequestBuilder(url: loaderInfo.sessionProvider.serverURL)?.setOTTBasicParams()
         
         let playbackContextOptions = PlaybackContextOptions(playbackContextType: loaderInfo.playbackContextType,
-                                                            protocls: [loaderInfo.networkProtocol],
+                                                            mediaProtocol: loaderInfo.networkProtocol,
                                                             assetFileIds: loaderInfo.fileIds,
                                                             referrer: self.referrer)
         
