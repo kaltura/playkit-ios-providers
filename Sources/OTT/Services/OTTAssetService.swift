@@ -43,7 +43,7 @@ class OTTAssetService {
 struct PlaybackContextOptions {
 
     var playbackContextType: PlaybackTypeAPI
-    var protocls: [String]
+    var mediaProtocol: String?
     var assetFileIds: [String]?
     var referrer: String?
     
@@ -51,7 +51,7 @@ struct PlaybackContextOptions {
 
         var dict: [String: Any] = [:]
         dict["context"] = playbackContextType.description
-        dict["mediaProtocols"] = protocls
+        dict["mediaProtocol"] = mediaProtocol
         if let fileIds = self.assetFileIds {
             dict["assetFileIds"] = fileIds.joined(separator: ",")
         }
