@@ -610,6 +610,11 @@ public enum PhoenixMediaProviderError: PKError {
             metadata["assetType"] = AssetType(type).description
         }
         
+        // Add entryId to the metadata
+        if let entryId = asset?.entryId {
+            metadata["entryId"] = entryId
+        }
+        
         return metadata
     }
     

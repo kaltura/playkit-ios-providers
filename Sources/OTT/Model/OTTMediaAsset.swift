@@ -23,6 +23,7 @@ fileprivate let typeKey = "type"
 fileprivate let nameKey = "name"
 fileprivate let mediaFilesKey = "mediaFiles"
 fileprivate let metasKey = "metas"
+fileprivate let entryIdKey = "entryId"
 
 public class OTTMediaAsset: OTTBaseObject {
     
@@ -39,6 +40,8 @@ public class OTTMediaAsset: OTTBaseObject {
     /**  Dynamic collection of key-value pairs according to the String Meta defined in
     the system  */
     var metas: [String: OTTBaseObject] = [:]
+    /**  Entry Identifier  */
+    var entryId: String?
     
     public required init?(json: Any) {
         let jsonObj: JSON = JSON(json)
@@ -46,6 +49,7 @@ public class OTTMediaAsset: OTTBaseObject {
         self.id = jsonObj[idKey].int
         self.type = jsonObj[typeKey].int
         self.name = jsonObj[nameKey].string
+        self.entryId = jsonObj[entryIdKey].string
         
         var mediaFiles = [OTTMediaFile]()
         jsonObj[mediaFilesKey].array?.forEach { (json) in
