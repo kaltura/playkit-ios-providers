@@ -8,7 +8,7 @@
 // https://www.gnu.org/licenses/agpl-3.0.html
 // ===================================================================================================
 
-import Foundation
+import UIKit
 import KalturaNetKit
 import PlayKitUtils
 import PlayKit

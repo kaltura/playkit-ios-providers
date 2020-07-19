@@ -13,13 +13,14 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "PlayKit", url: "https://github.com/kaltura/playkit-ios.git", .branch("spm")),
-        .package(url: "https://github.com/yahoojapan/SwiftyXMLParser.git", .branch("spm")),
+        .package(url: "https://github.com/yahoojapan/SwiftyXMLParser.git", from: "5.2.0"),
     ],
     targets: [
         .target(
             name: "PlayKitProviders",
             dependencies: [
                 "PlayKit",
+                "SwiftyXMLParser",
             ],
             path: "Sources"
         )
