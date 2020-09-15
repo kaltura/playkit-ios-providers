@@ -50,7 +50,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     
     override func buildRequest(ofType type: OTTAnalyticsEventType) -> Request? {
         guard !config.ks.isEmpty else {
-            PKLog.verbose("Analytics not sent, ks is empty.")
+            PKLog.debug("Analytics not sent, ks is empty.")
             return nil
         }
         
@@ -82,7 +82,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                                                                                     fileId: fileId ?? "") else { return nil }
         
         requestBuilder.set { (response: Response) in
-            PKLog.verbose("Response: \(response)")
+            PKLog.debug("Response: \(response)")
             if response.statusCode == 0 {
                 PKLog.verbose("\(String(describing: response.data))")
                 guard let data = response.data as? [String: Any] else { return }

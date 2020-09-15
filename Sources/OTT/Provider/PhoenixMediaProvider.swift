@@ -266,7 +266,7 @@ public enum PhoenixMediaProviderError: PKError {
     }
     
     /// - Parameter executor: executor which will be used to send request.
-    ///    default is USRExecutor
+    ///    default is KNKRequestExecutor
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(executor: RequestExecutor?) -> Self {
@@ -337,7 +337,7 @@ public enum PhoenixMediaProviderError: PKError {
         }
         
         let pr = self.networkProtocol ?? defaultProtocol
-        let executor = self.executor ?? USRExecutor.shared
+        let executor = self.executor ?? KNKRequestExecutor.shared
         
         let loaderParams = LoaderInfo(sessionProvider: sessionProvider,
                                       assetId: assetId,

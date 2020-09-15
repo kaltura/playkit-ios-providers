@@ -18,10 +18,10 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/**/*'
   
-  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.11'
+  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.18'
     
-  s.dependency 'KalturaNetKit', '~> 1.3'
-  s.dependency 'PlayKitUtils'
+  s.dependency 'KalturaNetKit', '~> 1.4'
+  s.dependency 'PlayKitUtils', '~> 0.5'
   s.dependency 'SwiftyXMLParser', '5.0.0'
 end
 
