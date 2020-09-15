@@ -150,7 +150,7 @@ import PlayKit
         let loaderInfo = LoaderInfo(sessionProvider: sessionProvider,
                                     entryId: entryId,
                                     uiconfId: self.uiconfId,
-                                    executor: executor ?? USRExecutor.shared)
+                                    executor: executor ?? KNKRequestExecutor.shared)
         
         self.startLoading(loadInfo: loaderInfo, callback: callback)
     }

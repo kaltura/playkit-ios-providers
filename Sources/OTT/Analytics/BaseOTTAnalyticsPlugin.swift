@@ -192,7 +192,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     }
     
     func send(request: Request) {
-        USRExecutor.shared.send(request: request)
+        KNKRequestExecutor.shared.send(request: request)
     }
     
     /************************************************************/
