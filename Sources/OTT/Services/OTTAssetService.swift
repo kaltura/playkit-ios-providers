@@ -46,6 +46,7 @@ struct PlaybackContextOptions {
     var mediaProtocol: String?
     var assetFileIds: [String]?
     var referrer: String?
+    var urlType: String?
     
     func toDictionary() -> [String: Any] {
 
@@ -57,6 +58,9 @@ struct PlaybackContextOptions {
         }
         if let referrer = self.referrer {
             dict["referrer"] = referrer
+        }
+        if let urlType = self.urlType {
+            dict["urlType"] = urlType
         }
         return dict
     }

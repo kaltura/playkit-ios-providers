@@ -179,6 +179,7 @@ public enum PhoenixMediaProviderError: PKError {
     @objc public var playbackContextType: PlaybackContextType = .unset
     @objc public var networkProtocol: String?
     @objc public var referrer: String?
+    @objc public var urlType: String?
     
     public weak var responseDelegate: PKMediaEntryProviderResponseDelegate? = nil
     
@@ -265,6 +266,14 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
+    /// - Parameter urlType: the url type
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(urlType: String?) -> Self {
+        self.urlType = urlType
+        return self
+    }
+    
     /// - Parameter executor: executor which will be used to send request.
     ///    default is KNKRequestExecutor
     /// - Returns: Self
@@ -295,6 +304,7 @@ public enum PhoenixMediaProviderError: PKError {
         var formats: [String]?
         var fileIds: [String]?
         var networkProtocol: String
+        var urlType: String?
         var executor: RequestExecutor
     }
     
@@ -347,6 +357,7 @@ public enum PhoenixMediaProviderError: PKError {
                                       formats: self.formats,
                                       fileIds: self.fileIds,
                                       networkProtocol: pr,
+                                      urlType: self.urlType,
                                       executor: executor)
         
         self.startLoad(loaderInfo: loaderParams, callback: callback)
@@ -369,7 +380,8 @@ public enum PhoenixMediaProviderError: PKError {
         let playbackContextOptions = PlaybackContextOptions(playbackContextType: loaderInfo.playbackContextType,
                                                             mediaProtocol: loaderInfo.networkProtocol,
                                                             assetFileIds: loaderInfo.fileIds,
-                                                            referrer: self.referrer)
+                                                            referrer: self.referrer,
+                                                            urlType: loaderInfo.urlType)
         
         var ksString: String
         
