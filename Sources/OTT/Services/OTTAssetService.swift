@@ -47,6 +47,7 @@ struct PlaybackContextOptions {
     var assetFileIds: [String]?
     var referrer: String?
     var urlType: String?
+    var streamerType: String?
     
     func toDictionary() -> [String: Any] {
 
@@ -61,6 +62,9 @@ struct PlaybackContextOptions {
         }
         if let urlType = self.urlType {
             dict["urlType"] = urlType
+        }
+        if let streamerType = self.streamerType {
+            dict["streamerType"] = streamerType
         }
         return dict
     }

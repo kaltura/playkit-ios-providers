@@ -180,6 +180,7 @@ public enum PhoenixMediaProviderError: PKError {
     @objc public var networkProtocol: String?
     @objc public var referrer: String?
     @objc public var urlType: String?
+    @objc public var streamerType: String?
     
     public weak var responseDelegate: PKMediaEntryProviderResponseDelegate? = nil
     
@@ -274,6 +275,14 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
+    /// - Parameter streamerType: the streamer type
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(streamerType: String?) -> Self {
+        self.streamerType = streamerType
+        return self
+    }
+    
     /// - Parameter executor: executor which will be used to send request.
     ///    default is KNKRequestExecutor
     /// - Returns: Self
@@ -305,6 +314,7 @@ public enum PhoenixMediaProviderError: PKError {
         var fileIds: [String]?
         var networkProtocol: String
         var urlType: String?
+        var streamerType: String?
         var executor: RequestExecutor
     }
     
@@ -358,6 +368,7 @@ public enum PhoenixMediaProviderError: PKError {
                                       fileIds: self.fileIds,
                                       networkProtocol: pr,
                                       urlType: self.urlType,
+                                      streamerType: self.streamerType,
                                       executor: executor)
         
         self.startLoad(loaderInfo: loaderParams, callback: callback)
@@ -381,7 +392,8 @@ public enum PhoenixMediaProviderError: PKError {
                                                             mediaProtocol: loaderInfo.networkProtocol,
                                                             assetFileIds: loaderInfo.fileIds,
                                                             referrer: self.referrer,
-                                                            urlType: loaderInfo.urlType)
+                                                            urlType: loaderInfo.urlType,
+                                                            streamerType: self.streamerType)
         
         var ksString: String
         
