@@ -20,7 +20,7 @@ public class OttEvent : PKEvent {
     class Concurrency : OttEvent {}
     /// represents the Concurrency event Type.
     /// Concurrency events fire when more then the allowed connections are exceeded.
-    public static let concurrency: OttEvent.Type = OttEvent.Concurrency.self
+    @objc public static let concurrency: OttEvent.Type = OttEvent.Concurrency.self
     
     class Report: OttEvent {
         convenience init(message: String) {
