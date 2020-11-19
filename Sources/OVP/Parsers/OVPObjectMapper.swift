@@ -37,6 +37,10 @@ class OVPObjectMapper: NSObject {
                 return OVPError.self
             case "KalturaMetadata":
                 return OVPMetadata.self
+            case "KalturaBaseEntryListResponse":
+                return OVPBaseEntryList.self
+            case "KalturaMetadataListResponse":
+                return OVPMetadataList.self
             default:
                 return nil
             }

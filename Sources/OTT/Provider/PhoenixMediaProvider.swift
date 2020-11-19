@@ -104,9 +104,6 @@ public enum PhoenixMediaProviderError: PKError {
     
     public static let domain = "com.kaltura.playkit.error.PhoenixMediaProvider"
     
-    public static let serverErrorCodeKey = "code"
-    public static let serverErrorMessageKey = "message"
-    
     public var code: Int {
         switch self {
         case .invalidInputParam: return 0
@@ -130,8 +127,8 @@ public enum PhoenixMediaProviderError: PKError {
     
     public var userInfo: [String: Any] {
         switch self {
-        case .serverError(let code, let message): return [PhoenixMediaProviderError.serverErrorCodeKey: code,
-                                                          PhoenixMediaProviderError.serverErrorMessageKey: message]
+        case .serverError(let code, let message): return [ProviderServerErrorCodeKey: code,
+                                                          ProviderServerErrorMessageKey: message]
         default:
             return [String: Any]()
         }
@@ -489,7 +486,7 @@ public enum PhoenixMediaProviderError: PKError {
                         error = errorObject
                     }
                 }
-                
+             
                 if let anError = error {
                     callback(nil, PhoenixMediaProviderError.serverError(code: anError.code ?? "", message: anError.message ?? "").asNSError)
                     return
