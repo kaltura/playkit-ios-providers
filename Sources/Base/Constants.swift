@@ -6,7 +6,10 @@
 //
 
 public let ProviderServerErrorCodeKey: String = "code"
-public let NSProviderServerErrorCodeKey: NSString = ProviderServerErrorCodeKey as NSString
-
 public let ProviderServerErrorMessageKey: String = "message"
-public let NSProviderServerErrorMessageKey: NSString = ProviderServerErrorMessageKey as NSString
+
+@objc class PKProvidersErrorUserInfoKey: NSObject {
+    
+    @objc public static let ServerErrorCodeKey: NSString = NSString(string: ProviderServerErrorCodeKey)
+    @objc public static let ServerErrorMessageKey: NSString = NSString(string: ProviderServerErrorMessageKey)
+}
