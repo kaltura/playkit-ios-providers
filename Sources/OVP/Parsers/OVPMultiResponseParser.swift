@@ -21,19 +21,21 @@ class OVPMultiResponseParser: NSObject {
             var resultArray: [OVPBaseObject] = [OVPBaseObject]()
             for jsonResult: JSON in resultArrayJSON {
                 var object: OVPBaseObject? = nil
-                if let objects = jsonResult["objects"].array{
+                if let parsedItem = OVPMultiResponseParser.parseSingleItem(json: jsonResult) {
+                    object = parsedItem
+                } else if let objects = jsonResult["objects"].array {
                     var parsedObjects: [OVPBaseObject] = [OVPBaseObject]()
-                    for object in objects{
-                        if  let OVPObject: OVPBaseObject = OVPMultiResponseParser.parseSingleItem(json: object){
+                    for object in objects {
+                        if let OVPObject: OVPBaseObject = OVPMultiResponseParser.parseSingleItem(json: object) {
                             parsedObjects.append(OVPObject)
                         }
                     }
-                  object = OVPList(objects: parsedObjects)
+                    object = OVPList(objects: parsedObjects)
                 } else {
-                    object = OVPMultiResponseParser.parseSingleItem(json: jsonResult)
+                    // Unrecognized object
                 }
                 
-                if let obj = object{
+                if let obj = object {
                     resultArray.append(obj)
                 }
             }

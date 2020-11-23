@@ -13,6 +13,49 @@ import SwiftyXMLParser
 import KalturaNetKit
 import PlayKit
 
+public enum OVPMediaProviderError: PKError {
+    case invalidParam(paramName: String)
+    case invalidKS
+    case invalidParams
+    case invalidResponse
+    case currentlyProcessingOtherRequest
+    case serverError(code:String, message:String)
+    
+    public static let domain = "com.kaltura.playkit.error.OVPMediaProvider"
+    
+    public var code: Int {
+        switch self {
+        case .invalidParam: return 0
+        case .invalidKS: return 1
+        case .invalidParams: return 2
+        case .invalidResponse: return 3
+        case .currentlyProcessingOtherRequest: return 4
+        case .serverError: return 5
+        }
+    }
+    
+    public var errorDescription: String {
+        switch self {
+        case .invalidParam(let param): return "Invalid input param: \(param)"
+        case .invalidKS: return "Invalid input ks"
+        case .invalidParams: return "Invalid input params"
+        case .invalidResponse: return "Response data is empty"
+        case .currentlyProcessingOtherRequest: return "Currently Processing Other Request"
+        case .serverError(let code, let message): return "Server Error code: \(code), \n message: \(message)"
+        }
+    }
+    
+    public var userInfo: [String: Any] {
+        switch self {
+        case .serverError(let code, let message):
+            return [ProviderServerErrorCodeKey: code,
+                    ProviderServerErrorMessageKey: message]
+        default:
+            return [String: Any]()
+        }
+    }
+}
+
 @objc public class OVPMediaProvider: NSObject, MediaEntryProvider {
 
     //This object is initiate at the begning of loadMedia methos and contain all neccessery info to load.
@@ -23,52 +66,6 @@ import PlayKit
         var executor: RequestExecutor
         var apiServerURL: String {
             return self.sessionProvider.serverURL + "/api_v3"
-        }
-    }
-    
-    enum OVPMediaProviderError: PKError {
-        case invalidParam(paramName: String)
-        case invalidKS
-        case invalidParams
-        case invalidResponse
-        case currentlyProcessingOtherRequest
-        case serverError(code:String, message:String)
-        
-        public static let domain = "com.kaltura.playkit.error.OVPMediaProvider"
-        
-        public static let serverErrorCodeKey = "code"
-        public static let serverErrorMessageKey = "message"
-        
-        public var code: Int {
-            switch self {
-            case .invalidParam: return 0
-            case .invalidKS: return 1
-            case .invalidParams: return 2
-            case .invalidResponse: return 3
-            case .currentlyProcessingOtherRequest: return 4
-            case .serverError: return 5
-            }
-        }
-        
-        public var errorDescription: String {
-            switch self {
-            case .invalidParam(let param): return "Invalid input param: \(param)"
-            case .invalidKS: return "Invalid input ks"
-            case .invalidParams: return "Invalid input params"
-            case .invalidResponse: return "Response data is empty"
-            case .currentlyProcessingOtherRequest: return "Currently Processing Other Request"
-            case .serverError(let code, let message): return "Server Error code: \(code), \n message: \(message)"
-            }
-        }
-        
-        public var userInfo: [String: Any] {
-            switch self {
-            case .serverError(let code, let message):
-                return [PhoenixMediaProviderError.serverErrorCodeKey: code,
-                        PhoenixMediaProviderError.serverErrorMessageKey: message]
-            default:
-                return [String: Any]()
-            }
         }
     }
     
@@ -236,25 +233,44 @@ import PlayKit
                         return
                     }
                     
-                    let metaData:OVPBaseObject = responses[responses.count-1]
-                    let contextDataResponse: OVPBaseObject = responses[responses.count-2]
-                    let mainResponse: OVPBaseObject = responses[responses.count-3]
+                    var ovpBaseEntryList: OVPBaseEntryList?
+                    var ovpMetadataList: OVPMetadataList?
+                    var ovpPlaybackContext: OVPPlaybackContext?
+                    var ovpError: OVPError?
                     
-                    guard let mainResponseData = mainResponse as? OVPList,
-                        let entry = mainResponseData.objects?.last as? OVPEntry,
-                        let contextData = contextDataResponse as? OVPPlaybackContext,
-                        let sources = contextData.sources,
-                        let metadataListObject = metaData as? OVPList,
-                        let metadataList = metadataListObject.objects as? [OVPMetadata]
+                    for response in responses {
+                        switch response {
+                        case is OVPBaseEntryList:
+                            ovpBaseEntryList = response as? OVPBaseEntryList
+                        case is OVPMetadataList:
+                            ovpMetadataList = response as? OVPMetadataList
+                        case is OVPPlaybackContext:
+                            ovpPlaybackContext = response as? OVPPlaybackContext
+                        case is OVPError:
+                            ovpError = response as? OVPError
+                        default:
+                            break
+                        }
+                    }
+                    
+                    if let error = ovpError {
+                        PKLog.debug("Response returned with an error.")
+                        callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError)
+                        return
+                    }
+                    
+                    guard let baseEntry = ovpBaseEntryList?.objects?.last,
+                        let sources = ovpPlaybackContext?.sources,
+                        let metadataList = ovpMetadataList?.objects
                         else {
                             PKLog.debug("Response is not containing entry info or playback data.")
                             callback(nil, OVPMediaProviderError.invalidResponse)
                             return
                     }
                     
-                    if (contextData.hasBlockAction() != nil) {
+                    if (ovpPlaybackContext?.hasBlockAction() != nil) {
                         PKLog.debug("The context data has a blocked action.")
-                        if let error = contextData.hasErrorMessage() {
+                        if let error = ovpPlaybackContext?.hasErrorMessage() {
                             callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "",
                                                                             message: error.message ?? ""))
                         } else {
@@ -281,16 +297,16 @@ import PlayKit
                             }
                         }
 
-                        let playURL: URL? = self.playbackURL(entryId: entry.id, loadInfo: loadInfo, source: source, ks: ksForURL)
+                        let playURL: URL? = self.playbackURL(entryId: baseEntry.id, loadInfo: loadInfo, source: source, ks: ksForURL)
                         guard let url = playURL else {
-                            PKLog.error("Failed to create play url from source, discarding source:\(entry.id), \(source.deliveryProfileId), \(source.format)")
+                            PKLog.error("Failed to create play url from source, discarding source:\(baseEntry.id), \(source.deliveryProfileId), \(source.format)")
                             return
                         }
                         
                         let drmData = self.buildDRMParams(drm: source.drm)
                         
                         // Creating media source with the above data
-                        let mediaSource: PKMediaSource = PKMediaSource(id: "\(entry.id)_\(String(source.deliveryProfileId))")
+                        let mediaSource: PKMediaSource = PKMediaSource(id: "\(baseEntry.id)_\(String(source.deliveryProfileId))")
                         mediaSource.drmData = drmData
                         mediaSource.contentUrl = url
                         mediaSource.mediaFormat = format
@@ -299,13 +315,13 @@ import PlayKit
                     
                     let metaDataItems = self.getMetadata(metadataList: metadataList)
                 
-                    let mediaEntry: PKMediaEntry = PKMediaEntry(entry.id, sources: mediaSources, duration: entry.duration)
-                    mediaEntry.name = entry.name
+                    let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
+                    mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
-                    mediaEntry.tags = entry.tags
-                    mediaEntry.mediaType = self.mediaType(of: entry.entryType())
+                    mediaEntry.tags = baseEntry.tags
+                    mediaEntry.mediaType = self.mediaType(of: baseEntry.entryType())
 
-                    if let liveEntry = entry as? OVPLiveStreamEntry, liveEntry.dvrStatus == true {
+                    if let liveEntry = baseEntry as? OVPLiveStreamEntry, liveEntry.dvrStatus == true {
                         mediaEntry.mediaType = .dvrLive
                     }
                     
