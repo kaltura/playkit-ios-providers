@@ -26,7 +26,31 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     var periodicObserverUUID: UUID?
     var mediaId: String?
     var stopSentByDestroy: Bool = false
+    
+    var ottAnalyticsPluginConfig: OTTAnalyticsPluginConfig?
+    
+    /************************************************************/
+    // MARK: - Private
+    /************************************************************/
 
+    private func shouldSendAnalyticsEvent(ofType type: OTTAnalyticsEventType) -> Bool {
+        guard let analyticsPluginConfig = ottAnalyticsPluginConfig else { return true }
+        
+        let isHitEvent: Bool = type == .hit
+        
+        if isHitEvent && analyticsPluginConfig.disableMediaHit {
+            PKLog.info("Media Hit Event Report Blocked")
+            return false
+        }
+        
+        if !isHitEvent && analyticsPluginConfig.disableMediaMark {
+            PKLog.info("Media Mark Event Report Blocked")
+            return false
+        }
+        
+        return true
+    }
+    
     /************************************************************/
     // MARK: - PKPlugin
     /************************************************************/
@@ -37,6 +61,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         self.periodicObserverUUID = self.player?.addPeriodicObserver(interval: 1.0, observeOn: DispatchQueue.main, using: { (time) in
             self.lastPosition = time.toInt32()
         })
+        self.ottAnalyticsPluginConfig = pluginConfig as? OTTAnalyticsPluginConfig
         self.registerEvents()
     }
 
@@ -177,12 +202,14 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     /************************************************************/
     
     func sendAnalyticsEvent(ofType type: OTTAnalyticsEventType) {
-        PKLog.debug("Send analytics event of type: \(type)")
-        // post to messageBus
-        let event = OttEvent.Report(message: "\(type) event")
-        self.messageBus?.post(event)
+        if !shouldSendAnalyticsEvent(ofType: type) { return }
         
         if let request = self.buildRequest(ofType: type) {
+            PKLog.debug("Send analytics event of type: \(type)")
+            // post to messageBus
+            let event = OttEvent.Report(message: "\(type) event")
+            self.messageBus?.post(event)
+            
             self.send(request: request)
         }
     }

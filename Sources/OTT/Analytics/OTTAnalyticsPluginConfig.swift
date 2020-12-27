@@ -14,9 +14,13 @@ import Foundation
     
     let baseUrl: String
     let timerInterval: TimeInterval
+    var disableMediaHit: Bool = false
+    var disableMediaMark: Bool = false
     
-    init(baseUrl: String, timerInterval: TimeInterval) {
+    init(baseUrl: String, timerInterval: TimeInterval, disableMediaHit: Bool = false, disableMediaMark: Bool = false) {
         self.baseUrl = baseUrl
         self.timerInterval = timerInterval
+        self.disableMediaHit = disableMediaHit
+        self.disableMediaMark = disableMediaMark
     }
 }

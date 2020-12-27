@@ -19,6 +19,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     var config: PhoenixAnalyticsPluginConfig! {
         didSet {
             self.interval = config.timerInterval
+            self.ottAnalyticsPluginConfig = config
         }
     }
     
@@ -29,7 +30,6 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             throw PKPluginError.missingPluginConfig(pluginName: PhoenixAnalyticsPlugin.pluginName)
         }
         self.config = config
-        self.interval = config.timerInterval
     }
     
     public override func onUpdateConfig(pluginConfig: Any) {
