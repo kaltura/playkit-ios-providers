@@ -76,10 +76,7 @@ struct PlaybackContextOptions {
                 }
             }
             
-            if let theJSONData = try? JSONSerialization.data(withJSONObject: newAdapterData, options: []),
-               let theJSONString = String(data: theJSONData, encoding: .utf8) {
-                dict["adapterData"] = theJSONString
-            }
+            dict["adapterData"] = newAdapterData
         }
         
         return dict
