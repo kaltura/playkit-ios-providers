@@ -44,7 +44,7 @@ class OVPSource: OVPBaseObject {
             self.protocols = protocols.components(separatedBy: ",")
         }
         
-        if let flavors = jsonObject[flavorsKey].string {
+        if let flavors = jsonObject[flavorsKey].string, !flavors.isEmpty {
             self.flavors = flavors.components(separatedBy: ",")
         }
         
