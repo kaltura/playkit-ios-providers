@@ -147,7 +147,7 @@ public enum OVPMediaProviderError: PKError {
             return
         }
         
-        // entryId or referenceId requierd
+        // entryId or referenceId required
         if self.entryId == nil && self.referenceId == nil {
             PKLog.debug("Proivder must have entryId or referenceId")
             callback(nil, OVPMediaProviderError.invalidParam(paramName: "entryId or referenceId"))
