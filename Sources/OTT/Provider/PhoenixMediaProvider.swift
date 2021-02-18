@@ -620,8 +620,12 @@ public enum PhoenixMediaProviderError: PKError {
             mediaEntry.tags = tags
         }
         
-        if let _ = asset as? OTTLiveAsset  {
+        if let asset = asset as? OTTLiveAsset {
             mediaEntry.mediaType = .live
+            
+            if let enableTrickPlay = asset.enableTrickPlay, enableTrickPlay {
+                mediaEntry.mediaType = .dvrLive
+            }
         }
         
         if loaderInfo.assetType == .epg && loaderInfo.playbackContextType == .startOver {
