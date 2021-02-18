@@ -404,7 +404,7 @@ public enum OVPMediaProviderError: PKError {
         
         let formatType = FormatsHelper.getMediaFormat(format: source.format, hasDrm: source.drm != nil)
         var playURL: URL? = nil
-        if let flavors =  source.flavors,
+        if let flavors = source.flavors,
             flavors.count > 0 {
             
             let sourceBuilder: SourceBuilder = SourceBuilder()
@@ -419,7 +419,21 @@ public enum OVPMediaProviderError: PKError {
                 .set(ks: ks)
             playURL = sourceBuilder.build()
         } else {
-            playURL = source.url
+            if let ks = ks, !ks.isEmpty, let sourceUrl = source.url {
+                if sourceUrl.query == nil {
+                    let lastPathComponent = sourceUrl.lastPathComponent
+                    
+                    playURL = sourceUrl
+                        .deletingLastPathComponent()
+                        .appendingPathComponent("ks")
+                        .appendingPathComponent(ks)
+                        .appendingPathComponent(lastPathComponent)
+                } else {
+                    playURL = sourceUrl.appendingQueryComponent(key: "ks", value: ks)
+                }
+            } else {
+                playURL = source.url
+            }
         }
         
         return playURL
