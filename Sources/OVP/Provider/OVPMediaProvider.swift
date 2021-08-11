@@ -328,9 +328,9 @@ public enum OVPMediaProviderError: PKError {
                         mediaSources.append(mediaSource)
                     }
                     
-                    let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId)
-                
                     let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
+                    let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
+                    
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = baseEntry.tags
@@ -352,7 +352,7 @@ public enum OVPMediaProviderError: PKError {
         }
     }
     
-    private func getMetadata(metadataList: [OVPMetadata], partnerId: Int64) -> [String: String] {
+    private func getMetadata(metadataList: [OVPMetadata], partnerId: Int64, entryId: String) -> [String: String] {
         var metaDataItems = [String: String]()
 
         for meta in metadataList {
@@ -373,6 +373,7 @@ public enum OVPMediaProviderError: PKError {
         }
         
         metaDataItems["kavaPartnerId"] = String(partnerId)
+        metaDataItems["entryId"] = entryId
         
         return metaDataItems
     }
