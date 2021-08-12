@@ -178,6 +178,7 @@ public enum PhoenixMediaProviderError: PKError {
     @objc public var referrer: String?
     @objc public var urlType: String?
     @objc public var streamerType: String?
+    @objc public var adapterData: [String: String]?
     
     public weak var responseDelegate: PKMediaEntryProviderResponseDelegate? = nil
     
@@ -186,7 +187,7 @@ public enum PhoenixMediaProviderError: PKError {
     public override init() { }
     
     /// - Parameter sessionProvider: This provider provider the ks for all wroking request.
-    /// If ks is nil, the provider will load the meida with anonymous ks
+    /// If ks is nil, the provider will load the media with anonymous ks
     /// - Returns: Self ( so you con continue set other parameters after it )
     @discardableResult
     @nonobjc public func set(sessionProvider: SessionProvider?) -> Self {
@@ -196,7 +197,7 @@ public enum PhoenixMediaProviderError: PKError {
     
     /// Required parameter
     ///
-    /// - Parameter assetId: asset identifier
+    /// - Parameter assetId: Asset identifier
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(assetId: String?) -> Self {
@@ -256,7 +257,7 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter referrer: the referrer
+    /// - Parameter referrer: The referrer
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(referrer: String?) -> Self {
@@ -264,7 +265,7 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter urlType: the url type
+    /// - Parameter urlType: The url type
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(urlType: String?) -> Self {
@@ -272,7 +273,7 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter streamerType: the streamer type
+    /// - Parameter streamerType: The streamer type
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(streamerType: String?) -> Self {
@@ -280,8 +281,16 @@ public enum PhoenixMediaProviderError: PKError {
         return self
     }
     
-    /// - Parameter executor: executor which will be used to send request.
-    ///    default is KNKRequestExecutor
+    /// - Parameter adapterData: The adapter data
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(adapterData: [String: String]?) -> Self {
+        self.adapterData = adapterData
+        return self
+    }
+    
+    /// - Parameter executor: Executor which will be used to send request.
+    ///    Default is KNKRequestExecutor
     /// - Returns: Self
     @discardableResult
     @nonobjc public func set(executor: RequestExecutor?) -> Self {
@@ -312,6 +321,7 @@ public enum PhoenixMediaProviderError: PKError {
         var networkProtocol: String
         var urlType: String?
         var streamerType: String?
+        var adapterData: [String: String]?
         var executor: RequestExecutor
     }
     
@@ -366,6 +376,7 @@ public enum PhoenixMediaProviderError: PKError {
                                       networkProtocol: pr,
                                       urlType: self.urlType,
                                       streamerType: self.streamerType,
+                                      adapterData: self.adapterData,
                                       executor: executor)
         
         self.startLoad(loaderInfo: loaderParams, callback: callback)
@@ -390,7 +401,8 @@ public enum PhoenixMediaProviderError: PKError {
                                                             assetFileIds: loaderInfo.fileIds,
                                                             referrer: self.referrer,
                                                             urlType: loaderInfo.urlType,
-                                                            streamerType: self.streamerType)
+                                                            streamerType: self.streamerType,
+                                                            adapterData: loaderInfo.adapterData)
         
         var ksString: String
         
@@ -608,8 +620,12 @@ public enum PhoenixMediaProviderError: PKError {
             mediaEntry.tags = tags
         }
         
-        if let _ = asset as? OTTLiveAsset  {
+        if let asset = asset as? OTTLiveAsset {
             mediaEntry.mediaType = .live
+            
+            if let enableTrickPlay = asset.enableTrickPlay, enableTrickPlay {
+                mediaEntry.mediaType = .dvrLive
+            }
         }
         
         if loaderInfo.assetType == .epg && loaderInfo.playbackContextType == .startOver {

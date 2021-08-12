@@ -48,6 +48,7 @@ struct PlaybackContextOptions {
     var referrer: String?
     var urlType: String?
     var streamerType: String?
+    var adapterData: [String: String]?
     
     func toDictionary() -> [String: Any] {
 
@@ -66,6 +67,18 @@ struct PlaybackContextOptions {
         if let streamerType = self.streamerType {
             dict["streamerType"] = streamerType
         }
+        
+        if let adapterData = self.adapterData {
+            var newAdapterData: [String: [String: String]] = [:]
+            for key in adapterData.keys {
+                if let value = adapterData[key] {
+                    newAdapterData[key] = ["value": value]
+                }
+            }
+            
+            dict["adapterData"] = newAdapterData
+        }
+        
         return dict
     }
 }

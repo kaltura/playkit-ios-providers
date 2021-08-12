@@ -61,7 +61,8 @@ public enum OVPMediaProviderError: PKError {
     //This object is initiate at the begning of loadMedia methos and contain all neccessery info to load.
     struct LoaderInfo {
         var sessionProvider: SessionProvider
-        var entryId: String
+        var entryId: String?
+        var referenceId: String?
         var uiconfId: NSNumber?
         var executor: RequestExecutor
         var apiServerURL: String {
@@ -71,6 +72,7 @@ public enum OVPMediaProviderError: PKError {
     
     @objc public var sessionProvider: SessionProvider?
     @objc public var entryId: String?
+    @objc public var referenceId: String?
     @objc public var uiconfId: NSNumber?
     @objc public var referrer: String?
     public var executor: RequestExecutor?
@@ -96,6 +98,15 @@ public enum OVPMediaProviderError: PKError {
     @discardableResult
     @nonobjc public func set(entryId: String?) -> Self {
         self.entryId = entryId
+        return self
+    }
+    
+    /**
+     referenceId - Reference Id of the Entry which we need to play
+     */
+    @discardableResult
+    @nonobjc public func set(referenceId: String?) -> Self {
+        self.referenceId = referenceId
         return self
     }
     
@@ -136,16 +147,17 @@ public enum OVPMediaProviderError: PKError {
             return
         }
         
-        // entryId is requierd
-        guard let entryId = self.entryId else {
-            PKLog.debug("Proivder must have entryId")
-            callback(nil, OVPMediaProviderError.invalidParam(paramName: "entryId"))
+        // entryId or referenceId required
+        if self.entryId == nil && self.referenceId == nil {
+            PKLog.debug("Proivder must have entryId or referenceId")
+            callback(nil, OVPMediaProviderError.invalidParam(paramName: "entryId or referenceId"))
             return
         }
         
         //building the loader info which contain all required fields
         let loaderInfo = LoaderInfo(sessionProvider: sessionProvider,
-                                    entryId: entryId,
+                                    entryId: self.entryId,
+                                    referenceId: self.referenceId,
                                     uiconfId: self.uiconfId,
                                     executor: executor ?? KNKRequestExecutor.shared)
         
@@ -186,7 +198,8 @@ public enum OVPMediaProviderError: PKError {
             // Request for Entry data
             let listRequest = OVPBaseEntryService.list(baseURL: loadInfo.apiServerURL,
                                                        ks: token,
-                                                       entryID: loadInfo.entryId)
+                                                       entryID: loadInfo.entryId,
+                                                       referenceId: loadInfo.referenceId)
             
             // Request for Entry playback data in order to build sources to play
             let getPlaybackContext =  OVPBaseEntryService.getPlaybackContext(baseURL: loadInfo.apiServerURL,
@@ -391,7 +404,7 @@ public enum OVPMediaProviderError: PKError {
         
         let formatType = FormatsHelper.getMediaFormat(format: source.format, hasDrm: source.drm != nil)
         var playURL: URL? = nil
-        if let flavors =  source.flavors,
+        if let flavors = source.flavors,
             flavors.count > 0 {
             
             let sourceBuilder: SourceBuilder = SourceBuilder()
@@ -406,7 +419,21 @@ public enum OVPMediaProviderError: PKError {
                 .set(ks: ks)
             playURL = sourceBuilder.build()
         } else {
-            playURL = source.url
+            if let ks = ks, !ks.isEmpty, let sourceUrl = source.url {
+                if sourceUrl.query == nil {
+                    let lastPathComponent = sourceUrl.lastPathComponent
+                    
+                    playURL = sourceUrl
+                        .deletingLastPathComponent()
+                        .appendingPathComponent("ks")
+                        .appendingPathComponent(ks)
+                        .appendingPathComponent(lastPathComponent)
+                } else {
+                    playURL = sourceUrl.appendingQueryComponent(key: "ks", value: ks)
+                }
+            } else {
+                playURL = source.url
+            }
         }
         
         return playURL
