@@ -27,23 +27,23 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     var mediaId: String?
     var stopSentByDestroy: Bool = false
     
-    var ottAnalyticsPluginConfig: OTTAnalyticsPluginConfig?
+    var disableMediaHit: Bool = false
+    var disableMediaMark: Bool = false
     
     /************************************************************/
     // MARK: - Private
     /************************************************************/
 
     private func shouldSendAnalyticsEvent(ofType type: OTTAnalyticsEventType) -> Bool {
-        guard let analyticsPluginConfig = ottAnalyticsPluginConfig else { return true }
         
         let isHitEvent: Bool = type == .hit
         
-        if isHitEvent && analyticsPluginConfig.disableMediaHit {
+        if isHitEvent && disableMediaHit {
             PKLog.info("Media Hit Event Report Blocked")
             return false
         }
         
-        if !isHitEvent && analyticsPluginConfig.disableMediaMark {
+        if !isHitEvent && disableMediaMark {
             PKLog.info("Media Mark Event Report Blocked")
             return false
         }
@@ -61,7 +61,6 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         self.periodicObserverUUID = self.player?.addPeriodicObserver(interval: 1.0, observeOn: DispatchQueue.main, using: { (time) in
             self.lastPosition = time.toInt32()
         })
-        self.ottAnalyticsPluginConfig = pluginConfig as? OTTAnalyticsPluginConfig
         self.registerEvents()
     }
 

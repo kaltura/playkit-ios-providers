@@ -19,7 +19,8 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     var config: PhoenixAnalyticsPluginConfig! {
         didSet {
             self.interval = config.timerInterval
-            self.ottAnalyticsPluginConfig = config
+            self.disableMediaHit = config.disableMediaHit
+            self.disableMediaMark = config.disableMediaMark
         }
     }
     
