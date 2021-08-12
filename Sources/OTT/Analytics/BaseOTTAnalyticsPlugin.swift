@@ -26,7 +26,31 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     var periodicObserverUUID: UUID?
     var mediaId: String?
     var stopSentByDestroy: Bool = false
+    
+    var disableMediaHit: Bool = false
+    var disableMediaMark: Bool = false
+    
+    /************************************************************/
+    // MARK: - Private
+    /************************************************************/
 
+    private func shouldSendAnalyticsEvent(ofType type: OTTAnalyticsEventType) -> Bool {
+        
+        let isHitEvent: Bool = type == .hit
+        
+        if isHitEvent && disableMediaHit {
+            PKLog.info("Media Hit Event Report Blocked")
+            return false
+        }
+        
+        if !isHitEvent && disableMediaMark {
+            PKLog.info("Media Mark Event Report Blocked")
+            return false
+        }
+        
+        return true
+    }
+    
     /************************************************************/
     // MARK: - PKPlugin
     /************************************************************/
@@ -177,12 +201,14 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     /************************************************************/
     
     func sendAnalyticsEvent(ofType type: OTTAnalyticsEventType) {
-        PKLog.debug("Send analytics event of type: \(type)")
-        // post to messageBus
-        let event = OttEvent.Report(message: "\(type) event")
-        self.messageBus?.post(event)
+        if !shouldSendAnalyticsEvent(ofType: type) { return }
         
         if let request = self.buildRequest(ofType: type) {
+            PKLog.debug("Send analytics event of type: \(type)")
+            // post to messageBus
+            let event = OttEvent.Report(message: "\(type) event")
+            self.messageBus?.post(event)
+            
             self.send(request: request)
         }
     }
