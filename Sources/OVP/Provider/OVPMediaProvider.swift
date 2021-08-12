@@ -166,6 +166,8 @@ public enum OVPMediaProviderError: PKError {
     
     func startLoading(loadInfo: LoaderInfo, callback: @escaping (PKMediaEntry?, Error?) -> Void) -> Void {
         
+        let partnerId = loadInfo.sessionProvider.partnerId
+        
         loadInfo.sessionProvider.loadKS { (resKS, error) in
             
             let mrb: KalturaMultiRequestBuilder? = KalturaMultiRequestBuilder(url: loadInfo.apiServerURL)?.setOVPBasicParams()
@@ -179,7 +181,7 @@ public enum OVPMediaProviderError: PKError {
             } else {
                 // Adding "startWidgetSession" request in case we don't have ks
                 let loginRequestBuilder = OVPSessionService.startWidgetSession(baseURL: loadInfo.apiServerURL,
-                                                                               partnerId: loadInfo.sessionProvider.partnerId)
+                                                                               partnerId: partnerId)
                 if let req = loginRequestBuilder {
                     mrb?.add(request: req)
                     // changing the ks to this format in order to use it as a multi request ( forward from the first response )
@@ -326,9 +328,9 @@ public enum OVPMediaProviderError: PKError {
                         mediaSources.append(mediaSource)
                     }
                     
-                    let metaDataItems = self.getMetadata(metadataList: metadataList)
-                
                     let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
+                    let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
+                    
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = baseEntry.tags
@@ -350,7 +352,7 @@ public enum OVPMediaProviderError: PKError {
         }
     }
     
-    private func getMetadata(metadataList: [OVPMetadata]) -> [String: String] {
+    private func getMetadata(metadataList: [OVPMetadata], partnerId: Int64, entryId: String) -> [String: String] {
         var metaDataItems = [String: String]()
 
         for meta in metadataList {
@@ -369,6 +371,9 @@ public enum OVPMediaProviderError: PKError {
                 PKLog.error("Error occur while trying to parse metadata XML")
             }
         }
+        
+        metaDataItems["partnerId"] = String(partnerId)
+        metaDataItems["entryId"] = entryId
         
         return metaDataItems
     }
