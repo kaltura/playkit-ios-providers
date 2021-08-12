@@ -372,7 +372,7 @@ public enum OVPMediaProviderError: PKError {
             }
         }
         
-        metaDataItems["kavaPartnerId"] = String(partnerId)
+        metaDataItems["partnerId"] = String(partnerId)
         metaDataItems["entryId"] = entryId
         
         return metaDataItems
