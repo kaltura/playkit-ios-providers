@@ -31,6 +31,8 @@ class OVPMultiResponseParser: NSObject {
                         }
                     }
                     object = OVPList(objects: parsedObjects)
+                } else if let items = jsonResult.array {
+                    object = OVPList(objects: items.compactMap { OVPMultiResponseParser.parseSingleItem(json: $0) })
                 } else {
                     // Unrecognized object
                 }

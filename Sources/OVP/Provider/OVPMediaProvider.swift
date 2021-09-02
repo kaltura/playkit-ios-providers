@@ -454,7 +454,7 @@ public enum OVPMediaProviderError: PKError {
         }
     }
     
-    @objc public func cancel(){
+    @objc public func cancel() {
         
     }
     

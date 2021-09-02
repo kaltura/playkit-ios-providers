@@ -1,0 +1,197 @@
+// ===================================================================================================
+// Copyright (C) 2021 Kaltura Inc.
+//
+// Licensed under the AGPLv3 license, unless a different license for a
+// particular library is specified in the applicable library path.
+//
+// You may obtain a copy of the License at
+// https://www.gnu.org/licenses/agpl-3.0.html
+// ===================================================================================================
+//
+
+import Foundation
+import KalturaNetKit
+import PlayKit
+
+@objc public class OVPPlaylistProvider: OVPBasicProvider, PlaylistProvider {
+    
+    struct PlaylistLoaderInfo {
+        var sessionProvider: SessionProvider
+        var playlistId: String?
+        var uiconfId: NSNumber? // ???
+        var executor: RequestExecutor
+        var apiServerURL: String {
+            return self.sessionProvider.serverURL + "/api_v3"
+        }
+    }
+    
+    @objc public var playlistId: String?
+    
+    @discardableResult
+    @nonobjc public func set(playlistId: String?) -> Self {
+        self.playlistId = playlistId
+        return self
+    }
+    
+    public func loadPlaylist(callback: @escaping (PKPlaylist?, Error?) -> Void) {
+        
+        // session provider is required in order to have the base url and the partner id
+        guard let sessionProvider = self.sessionProvider else {
+            PKLog.debug("Proivder must have session info")
+            callback(nil, OVPMediaProviderError.invalidParam(paramName: "sessionProvider"))
+            return
+        }
+        
+        // playlistId orrequired
+        if self.playlistId == nil {
+            PKLog.debug("Proivder must have playlistId")
+            callback(nil, OVPMediaProviderError.invalidParam(paramName: "playlistId"))
+            return
+        }
+        
+        //building the loader info which contain all required fields
+        let loaderInfo = PlaylistLoaderInfo(sessionProvider: sessionProvider,
+                                            playlistId: self.playlistId,
+                                            uiconfId: self.uiconfId,
+                                            executor: executor ?? KNKRequestExecutor.shared)
+        
+        self.startLoading(loadInfo: loaderInfo, callback: callback)
+    }
+    
+    func startLoading(loadInfo: PlaylistLoaderInfo, callback: @escaping (PKPlaylist?, Error?) -> Void) -> Void {
+        
+        loadInfo.sessionProvider.loadKS { (resKS, error) in
+            
+            let mrb: KalturaMultiRequestBuilder? = KalturaMultiRequestBuilder(url: loadInfo.apiServerURL)?.setOVPBasicParams()
+            
+            var ks: String? = nil
+            
+            // checking if we got ks from the session, otherwise we should work as anonymous
+            if let data = resKS, data.isEmpty == false {
+                ks = data
+            } else {
+                // Adding "startWidgetSession" request in case we don't have ks
+                let loginRequestBuilder = OVPSessionService.startWidgetSession(baseURL: loadInfo.apiServerURL,
+                                                                               partnerId: loadInfo.sessionProvider.partnerId)
+                if let req = loginRequestBuilder {
+                    mrb?.add(request: req)
+                    // Changing the ks to this format in order to use it as a multi request (forward from the first response)
+                    ks = "{1:result:ks}"
+                }
+            }
+            
+            // Check if we don't have forward token and not real token we can't continue
+            guard let token = ks else {
+                PKLog.debug("can't find ks and can't request as anonymous ks (WidgetSession)")
+                callback(nil, OVPMediaProviderError.invalidKS)
+                return
+            }
+            
+            // Request for Entry data
+            let getPlaylist = OVPBasePlaylistService.get(baseURL: loadInfo.apiServerURL,
+                                                         ks: token,
+                                                         playlistId: loadInfo.playlistId)
+            
+            let executePlaylist = OVPBasePlaylistService.execute(baseURL: loadInfo.apiServerURL,
+                                                                 ks: token,
+                                                                 playlistId: loadInfo.playlistId)
+            
+            guard let req1 = getPlaylist, let req2 = executePlaylist else {
+                callback(nil, OVPMediaProviderError.invalidParams)
+                return
+            }
+            
+            // Combining all requests to single multi request
+            mrb?.add(request: req1)
+                .add(request: req2)
+                .set(completion: { (dataResponse: Response) in
+                    
+                    PKLog.debug("Response:\nStatus Code: \(dataResponse.statusCode)\nError: \(dataResponse.error?.localizedDescription ?? "")\nData: \(dataResponse.data ?? "")")
+                    
+                    if let error = dataResponse.error {
+                        PKLog.debug("Got an error.")
+                        // If error is of type `PKError` pass it as `NSError` else pass the `Error` object.
+                        callback(nil, (error as? PKError)?.asNSError ?? error)
+                        return
+                    }
+                    
+                    guard let data = dataResponse.data else {
+                        PKLog.debug("Didn't get response data.")
+                        callback(nil, OVPMediaProviderError.invalidResponse)
+                        return
+                    }
+                    
+                    let responses: [OVPBaseObject] = OVPMultiResponseParser.parse(data: data)
+                    
+                    // At leat we need to get response of Playlist and Playlist media items, on anonymous we will have additional startWidgetSession call
+                    guard responses.count >= 2 else {
+                        PKLog.debug("Didn't get response for all requests.")
+                        callback(nil, OVPMediaProviderError.invalidResponse)
+                        return
+                    }
+                    
+                    var ovpPlaylist: OVPPlaylist?
+                    var ovpEntryList: [OVPEntry]?
+                    var ovpError: OVPError?
+                    
+                    for response in responses {
+                        switch response {
+                        case is OVPList:
+                            if let list = response as? OVPList {
+                                ovpEntryList = list.objects as? [OVPEntry]
+                            }
+                        case is OVPPlaylist:
+                            ovpPlaylist = response as? OVPPlaylist
+                        case is OVPError:
+                            ovpError = response as? OVPError
+                        default:
+                            break
+                        }
+                    }
+                    
+                    if let error = ovpError {
+                        PKLog.debug("Response returned with an error.")
+                        callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError)
+                        return
+                    }
+                    
+                    guard let playlistData = ovpPlaylist,
+                        let playlistItems = ovpEntryList,
+                        !playlistItems.isEmpty
+                        else {
+                            PKLog.debug("Response is not containing playlist info or playlist items")
+                            callback(nil, OVPMediaProviderError.invalidResponse)
+                            return
+                    }
+                    
+                    let entries: [PKMediaEntry] = playlistItems.map {
+                        let entry = PKMediaEntry($0.id,
+                                                 sources: nil,
+                                                 duration: $0.duration)
+                        
+                        return entry
+                    }
+                    
+                    let playlist = PKPlaylist(playlistData.id,
+                                              name: playlistData.name,
+                                              thumbnailUrl: playlistData.thumbnailUrl,
+                                              medias: entries)
+                    
+                    callback(playlist, nil)
+                })
+            
+            // Building and executing multi request.
+            if let request = mrb?.build() {
+                PKLog.debug("Sending requests: \(mrb?.description ?? "")")
+                loadInfo.executor.send(request: request)
+            } else {
+                callback(nil, OVPMediaProviderError.invalidParams)
+            }
+        }
+    }
+    
+    public func cancel() {
+        
+    }
+    
+}
