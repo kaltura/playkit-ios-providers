@@ -169,6 +169,8 @@ import PlayKit
                                                  sources: nil,
                                                  duration: $0.duration)
                         
+                        entry.name = $0.name
+                        entry.thumbnailUrl = $0.thumbnailUrl
                         return entry
                     }
                     
@@ -191,6 +193,7 @@ import PlayKit
     }
     
     public func cancel() {
+        
         
     }
     
