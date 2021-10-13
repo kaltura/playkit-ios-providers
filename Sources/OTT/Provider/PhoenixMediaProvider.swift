@@ -649,15 +649,18 @@ public enum PhoenixMediaProviderError: PKError {
     static func createMetadata(from asset: OTTMediaAsset?, loaderInfo: LoaderInfo) -> [String: String] {
         var metadata: [String: String] = asset?.arrayOfMetas() ?? [:]
         
-        if let recordingAsset = asset as? OTTRecordingAsset {
+        if let recordingAsset = asset as? PlayKitProviders.OTTRecordingAsset {
             metadata["recordingId"] = recordingAsset.recordingId
             metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
+            metadata["epgId"] = recordingAsset.epgId
+        }
+        
+        if let programAsset = asset as? PlayKitProviders.OTTProgramAsset {
+            metadata["epgId"] = programAsset.epgId
         }
         
         if let epgId = loaderInfo.epgId {
-            metadata["epgId"] = epgId
-        } else if let programAsset = asset as? OTTProgramAsset {
-            metadata["epgId"] = programAsset.epgId
+            metadata["epgId"] = epgId // preffer epgId if given by app
         }
         
         if let type = asset?.type {
