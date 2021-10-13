@@ -77,7 +77,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             mediaId = mediaRecordingId
         }
         
-        var epgId = ""
+        var epgId: String? = nil
         if let metadataEpgId = self.player?.mediaEntry?.metadata, let mediaEpgId = metadataEpgId["epgId"] {
             epgId = mediaEpgId
         }
