@@ -16,7 +16,7 @@ import KalturaNetKit
 class OVPBaseEntryService {
 
     internal static func list(baseURL: String, ks: String, entryID: String?, referenceId: String?) -> KalturaRequestBuilder? {
-        
+        // "referenceId,description,thumbnailUrl,externalSourceType,status"
         if let request: KalturaRequestBuilder = KalturaRequestBuilder(url: baseURL, service: "baseEntry", action: "list") {
             let responseProfile = ["fields": "mediaType,dataUrl,id,name,duration,msDuration,flavorParamsIds,tags,dvrStatus",
                                    "type": 1] as [String: Any]
