@@ -50,7 +50,7 @@ import PlayKit
             return
         }
         
-        guard let assets = self.mediaAssets, !assets.isEmpty || self.playlistId != nil else {
+        guard self.mediaAssets != nil || self.playlistId != nil else {
             PKLog.debug("Proivder must have playlistId or mediaAssets")
             callback(nil, OVPMediaProviderError.invalidParams)
             return
