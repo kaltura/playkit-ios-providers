@@ -659,8 +659,9 @@ public enum PhoenixMediaProviderError: PKError {
             metadata["epgId"] = programAsset.epgId
         }
         
+        // Prefer epgId if given by app
         if let epgId = loaderInfo.epgId {
-            metadata["epgId"] = epgId // preffer epgId if given by app
+            metadata["epgId"] = epgId
         }
         
         if let type = asset?.type {
