@@ -652,9 +652,9 @@ public enum PhoenixMediaProviderError: PKError {
         if let recordingAsset = asset as? OTTRecordingAsset {
             metadata["recordingId"] = recordingAsset.recordingId
             metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
-            metadata["epgId"] = recordingAsset.epgId
         }
         
+        // programAsset.epgId will be set both for OTTRecordingAsset and OTTProgramAsset
         if let programAsset = asset as? OTTProgramAsset {
             metadata["epgId"] = programAsset.epgId
         }
