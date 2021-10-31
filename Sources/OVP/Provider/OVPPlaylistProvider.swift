@@ -332,7 +332,6 @@ import PlayKit
         }
     }
     
-    
     public func cancel() {
         
         

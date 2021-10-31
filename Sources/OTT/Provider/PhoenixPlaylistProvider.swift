@@ -10,3 +10,17 @@
 //
 
 import Foundation
+import KalturaNetKit
+import PlayKit
+
+@objc public class OTTPlaylistProvider: PhoenixMediaProvider, PlaylistProvider {
+    
+    public func loadPlaylist(callback: @escaping (PKPlaylist?, Error?) -> Void) {
+        
+    }
+    
+    override public func cancel() {
+        
+    }
+    
+}
