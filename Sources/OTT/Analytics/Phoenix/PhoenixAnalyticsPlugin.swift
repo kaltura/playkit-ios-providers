@@ -73,12 +73,22 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             assetType = type
         }
         
+        if let metadataRecordingId = self.player?.mediaEntry?.metadata, let mediaRecordingId = metadataRecordingId["recordingId"] {
+            mediaId = mediaRecordingId
+        }
+        
+        var epgId: String? = nil
+        if let metadataEpgId = self.player?.mediaEntry?.metadata, let mediaEpgId = metadataEpgId["epgId"] {
+            epgId = mediaEpgId
+        }
+        
         guard let requestBuilder: KalturaRequestBuilder = BookmarkService.actionAdd(baseURL: config.baseUrl,
                                                                                     partnerId: config.partnerId,
                                                                                     ks: config.ks,
                                                                                     eventType: type.rawValue.uppercased(),
                                                                                     currentTime: currentTime,
                                                                                     assetId: mediaId ?? "",
+                                                                                    epgId: epgId,
                                                                                     assetType: assetType,
                                                                                     fileId: fileId ?? "") else { return nil }
         

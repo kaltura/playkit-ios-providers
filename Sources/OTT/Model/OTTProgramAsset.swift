@@ -3,14 +3,14 @@ import Foundation
 import SwiftyJSON
 
 fileprivate let epgChannelIdKey = "epgChannelId"
-fileprivate let epgIdKey = ""
-fileprivate let relatedMediaIdKey = ""
-fileprivate let cridKey = ""
-fileprivate let linearAssetIdKey = ""
-fileprivate let enableCdvrKey = ""
-fileprivate let enableCatchUpKey = ""
-fileprivate let enableStartOverKey = ""
-fileprivate let enableTrickPlayKey = ""
+fileprivate let epgIdKey = "epgId"
+fileprivate let relatedMediaIdKey = "relatedMediaId"
+fileprivate let cridKey = "crid"
+fileprivate let linearAssetIdKey = "linearAssetId"
+fileprivate let enableCdvrKey = "enableCdvr"
+fileprivate let enableCatchUpKey = "enableCatchUp"
+fileprivate let enableStartOverKey = "enableStartOver"
+fileprivate let enableTrickPlayKey = "enableTrickPlay"
 
 public class OTTProgramAsset: OTTMediaAsset {
     
