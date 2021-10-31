@@ -42,7 +42,7 @@ internal class BookmarkService {
         json["type"] = JSON(assetType)
         json["id"] = JSON(assetId)
         if let epgId = epgId {
-            json["programId"] = JSON(epgId) // not alwayes only if epgId exists
+            json["programId"] = JSON(epgId)
         }
         json["position"] = JSON(position)
         json["playerData"] = JSON.init(["action": JSON(eventType),
