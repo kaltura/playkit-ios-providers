@@ -1,5 +1,5 @@
 //
-//  OVPBasicProvider.swift
+//  BasicProvider.swift
 //  PlayKitProviders
 //
 //  Created by Sergii Chausov on 30.08.2021.
@@ -8,7 +8,7 @@
 import Foundation
 import KalturaNetKit
 
-@objc public class OVPBasicProvider: NSObject {
+@objc public class BasicProvider: NSObject {
  
     @objc public var sessionProvider: SessionProvider?
     

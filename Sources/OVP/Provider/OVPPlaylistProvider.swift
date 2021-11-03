@@ -13,9 +13,9 @@ import Foundation
 import KalturaNetKit
 import PlayKit
 
-@objc public class OVPPlaylistProvider: OVPBasicProvider, PlaylistProvider {
+@objc public class OVPPlaylistProvider: BasicProvider, PlaylistProvider {
     
-    struct PlaylistLoaderInfo {
+    struct OVPPlaylistLoaderInfo {
         var sessionProvider: SessionProvider
         var playlistId: String?
         var mediaAssets: [OVPMediaAsset]?
@@ -57,7 +57,7 @@ import PlayKit
         }
         
         //building the loader info which contain all required fields
-        let loaderInfo = PlaylistLoaderInfo(sessionProvider: sessionProvider,
+        let loaderInfo = OVPPlaylistLoaderInfo(sessionProvider: sessionProvider,
                                             playlistId: self.playlistId,
                                             mediaAssets: self.mediaAssets,
                                             uiconfId: self.uiconfId,
@@ -72,7 +72,7 @@ import PlayKit
         }
     }
     
-    func startLoading(loadInfo: PlaylistLoaderInfo, callback: @escaping (PKPlaylist?, Error?) -> Void) -> Void {
+    func startLoading(loadInfo: OVPPlaylistLoaderInfo, callback: @escaping (PKPlaylist?, Error?) -> Void) -> Void {
         
         loadInfo.sessionProvider.loadKS { (resKS, error) in
             
@@ -206,7 +206,7 @@ import PlayKit
         }
     }
     
-    func startLoadingByIds(loadInfo: PlaylistLoaderInfo, callback: @escaping (PKPlaylist?, Error?) -> Void) -> Void {
+    func startLoadingByIds(loadInfo: OVPPlaylistLoaderInfo, callback: @escaping (PKPlaylist?, Error?) -> Void) -> Void {
         
         loadInfo.sessionProvider.loadKS { (resKS, error) in
             
