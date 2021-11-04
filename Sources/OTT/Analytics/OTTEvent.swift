@@ -12,10 +12,12 @@ import UIKit
 import PlayKit
 
 /// OTT Event
-public class OttEvent : PKEvent {
+public class OttEvent: PKEvent {
     
     static let codeKey = "code"
     static let messageKey = "message"
+    
+    @objc public static let allEventTypes: [OttEvent.Type] = [concurrency, report, bookmarkError]
     
     class Concurrency : OttEvent {}
     /// represents the Concurrency event Type.
