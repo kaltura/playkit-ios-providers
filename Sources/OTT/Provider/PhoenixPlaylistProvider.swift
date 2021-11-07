@@ -163,7 +163,7 @@ import PlayKit
                     return entry
                 }
                 
-                let playlist = PKPlaylist("ott_id",
+                let playlist = PKPlaylist(id: nil,
                                           name: nil,
                                           thumbnailUrl: nil,
                                           medias: entries)

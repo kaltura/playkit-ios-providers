@@ -188,7 +188,7 @@ import PlayKit
                         return entry
                     }
                     
-                    let playlist = PKPlaylist(playlistData.id,
+                    let playlist = PKPlaylist(id: playlistData.id,
                                               name: playlistData.name,
                                               thumbnailUrl: playlistData.thumbnailUrl,
                                               medias: entries)
@@ -314,7 +314,7 @@ import PlayKit
                     return entry
                 }
                 
-                let playlist = PKPlaylist("ovp_id",
+                let playlist = PKPlaylist(id: nil,
                                           name: nil,
                                           thumbnailUrl: nil,
                                           medias: entries)
