@@ -16,11 +16,13 @@ import Foundation
     let timerInterval: TimeInterval
     var disableMediaHit: Bool = false
     var disableMediaMark: Bool = false
+    var epgId: String?
     
-    init(baseUrl: String, timerInterval: TimeInterval, disableMediaHit: Bool = false, disableMediaMark: Bool = false) {
+    init(baseUrl: String, timerInterval: TimeInterval, disableMediaHit: Bool = false, disableMediaMark: Bool = false, epgId: String? = nil) {
         self.baseUrl = baseUrl
         self.timerInterval = timerInterval
         self.disableMediaHit = disableMediaHit
         self.disableMediaMark = disableMediaMark
+        self.epgId = epgId
     }
 }

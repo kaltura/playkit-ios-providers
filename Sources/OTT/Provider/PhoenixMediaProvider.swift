@@ -322,7 +322,6 @@ public enum PhoenixMediaProviderError: PKError {
     public struct LoaderInfo {
         var sessionProvider: SessionProvider
         var assetId: String
-        var epgId: String?
         var assetType: AssetTypeAPI
         var assetRefType: AssetReferenceTypeAPI?
         var playbackContextType: PlaybackTypeAPI
@@ -378,7 +377,6 @@ public enum PhoenixMediaProviderError: PKError {
         
         let loaderParams = LoaderInfo(sessionProvider: sessionProvider,
                                       assetId: assetId,
-                                      epgId: self.epgId,
                                       assetType: self.toAPIType(type: self.type),
                                       assetRefType: self.toAPIType(type: self.refType),
                                       playbackContextType: self.toAPIType(type: self.playbackContextType),
@@ -657,11 +655,6 @@ public enum PhoenixMediaProviderError: PKError {
         // programAsset.epgId will be set both for OTTRecordingAsset and OTTProgramAsset
         if let programAsset = asset as? OTTProgramAsset {
             metadata["epgId"] = programAsset.epgId
-        }
-        
-        // Prefer epgId if given by app
-        if let epgId = loaderInfo.epgId {
-            metadata["epgId"] = epgId
         }
         
         if let type = asset?.type {

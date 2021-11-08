@@ -41,7 +41,7 @@ internal class BookmarkService {
         var json: JSON = JSON.init(["objectType": "KalturaBookmark"])
         json["type"] = JSON(assetType)
         json["id"] = JSON(assetId)
-        if let epgId = epgId {
+        if let epgId = epgId, !epgId.isEmpty {
             json["programId"] = JSON(epgId)
         }
         json["position"] = JSON(position)
