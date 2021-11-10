@@ -17,9 +17,10 @@ import Foundation
                       ks: String,
                       partnerId: Int,
                       disableMediaHit: Bool = false,
-                      disableMediaMark: Bool = false) {
+                      disableMediaMark: Bool = false,
+                      epgId: String? = nil) {
         self.ks = ks
         self.partnerId = partnerId
-        super.init(baseUrl: baseUrl, timerInterval: timerInterval, disableMediaHit: disableMediaHit, disableMediaMark: disableMediaMark)
+        super.init(baseUrl: baseUrl, timerInterval: timerInterval, disableMediaHit: disableMediaHit, disableMediaMark: disableMediaMark, epgId: epgId)
     }
 }
