@@ -191,10 +191,12 @@ import PlayKit
     
     var id: String?
     var assetReferenceType: AssetReferenceType?
+    var networkProtocol: String?
     
-    public init(id: String? = nil, assetReferenceType: AssetReferenceType? = nil) {
+    public init(id: String? = nil, assetReferenceType: AssetReferenceType? = nil, networkProtocol: String? = nil) {
         self.id = id
         self.assetReferenceType = assetReferenceType
+        self.networkProtocol = networkProtocol
     }
     
 }
