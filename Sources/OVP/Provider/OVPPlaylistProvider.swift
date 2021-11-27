@@ -276,7 +276,6 @@ import PlayKit
                 }
                 
                 var ovpEntryList: [OVPEntry] = []
-                var ovpError: OVPError?
                 
                 for response in responses {
                     switch response {
@@ -286,16 +285,13 @@ import PlayKit
                             ovpEntryList.append(contentsOf: items)
                         }
                     case is OVPError:
-                        ovpError = response as? OVPError
+                        if let error = response as? OVPError {
+                            let errorDescription = OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError.localizedDescription
+                            PKLog.error("Invalid Entry. Error: \(errorDescription)")
+                        }
                     default:
                         break
                     }
-                }
-                
-                if let error = ovpError {
-                    PKLog.debug("Response returned with an error.")
-                    callback(nil, OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError)
-                    return
                 }
                 
                 if ovpEntryList.isEmpty {

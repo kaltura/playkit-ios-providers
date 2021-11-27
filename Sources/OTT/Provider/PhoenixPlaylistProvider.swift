@@ -126,7 +126,6 @@ import PlayKit
                 }
                 
                 var ottEntryList: [OTTMediaAsset] = []
-                var ottError: OTTError?
                 
                 for response in responses {
                     switch response {
@@ -135,16 +134,13 @@ import PlayKit
                             ottEntryList.append(asset)
                         }
                     case is OTTError:
-                        ottError = response as? OTTError
+                        if let error = response as? OTTError {
+                            let errorDescription = OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError.localizedDescription
+                            PKLog.error("Invalid Entry. Error: \(errorDescription)")
+                        }
                     default:
                         break
                     }
-                }
-                
-                if let error = ottError {
-                    PKLog.debug("Response returned with an error.")
-                    callback(nil, PhoenixMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError)
-                    return
                 }
                 
                 if ottEntryList.isEmpty {
