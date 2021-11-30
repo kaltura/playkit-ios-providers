@@ -169,6 +169,7 @@ public enum PhoenixMediaProviderError: PKError {
     
     @objc public var sessionProvider: SessionProvider?
     @objc public var assetId: String?
+    @objc public var epgId: String?
     @objc public var type: AssetType = .unset
     @objc public var refType: AssetReferenceType = .unset
     @objc public var formats: [String]?
@@ -202,6 +203,14 @@ public enum PhoenixMediaProviderError: PKError {
     @discardableResult
     @nonobjc public func set(assetId: String?) -> Self {
         self.assetId = assetId
+        return self
+    }
+    
+    /// - Parameter epgId: The epgId if available for live/ iveDvr
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(epgId: String?) -> Self {
+        self.epgId = epgId
         return self
     }
     
@@ -613,7 +622,7 @@ public enum PhoenixMediaProviderError: PKError {
         let mediaEntry = PKMediaEntry(loaderInfo.assetId, sources: mediaSources, duration: TimeInterval(maxDuration))
         mediaEntry.name = asset?.name
         
-        mediaEntry.metadata = createMetadata(from: asset)
+        mediaEntry.metadata = createMetadata(from: asset, loaderInfo: loaderInfo)
         
         let metadata = asset?.arrayOfMetas()
         if let tags = metadata?["tags"] {
@@ -635,12 +644,17 @@ public enum PhoenixMediaProviderError: PKError {
         return (mediaEntry, nil)
     }
     
-    static func createMetadata(from asset: OTTMediaAsset?) -> [String: String] {
+    static func createMetadata(from asset: OTTMediaAsset?, loaderInfo: LoaderInfo) -> [String: String] {
         var metadata: [String: String] = asset?.arrayOfMetas() ?? [:]
         
         if let recordingAsset = asset as? OTTRecordingAsset {
             metadata["recordingId"] = recordingAsset.recordingId
             metadata["recordingType"] = recordingAsset.recordingType.map { $0.rawValue }
+        }
+        
+        // programAsset.epgId will be set both for OTTRecordingAsset and OTTProgramAsset
+        if let programAsset = asset as? OTTProgramAsset {
+            metadata["epgId"] = programAsset.epgId
         }
         
         if let type = asset?.type {

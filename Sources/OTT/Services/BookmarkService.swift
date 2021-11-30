@@ -20,6 +20,7 @@ internal class BookmarkService {
                                    eventType: String,
                                    currentTime: Int32,
                                    assetId: String,
+                                   epgId: String?,
                                    assetType: String,
                                    fileId: String) -> KalturaRequestBuilder? {
         
@@ -29,17 +30,20 @@ internal class BookmarkService {
                 .set(method: .post)
                 .setBody(key: "ks", value: JSON(ks))
                 .setBody(key: "bookmark",
-                         value: createBookmark(eventType: eventType, position: currentTime, assetId: assetId, assetType: assetType, fileId: fileId))
+                         value: createBookmark(eventType: eventType, position: currentTime, assetId: assetId, epgId: epgId, assetType: assetType, fileId: fileId))
             return request
         } else {
             return nil
         }
     }
 
-    private static func createBookmark(eventType: String, position: Int32, assetId: String, assetType: String, fileId: String) -> JSON {
+    private static func createBookmark(eventType: String, position: Int32, assetId: String, epgId: String? = nil, assetType: String, fileId: String) -> JSON {
         var json: JSON = JSON.init(["objectType": "KalturaBookmark"])
         json["type"] = JSON(assetType)
         json["id"] = JSON(assetId)
+        if let epgId = epgId, !epgId.isEmpty {
+            json["programId"] = JSON(epgId)
+        }
         json["position"] = JSON(position)
         json["playerData"] = JSON.init(["action": JSON(eventType),
                                         "objectType": JSON("KalturaBookmarkPlayerData"),

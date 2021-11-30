@@ -9,6 +9,7 @@ public enum RecordingType: String {
     case single = "SINGLE"
     case season = "SEASON"
     case series = "SERIES"
+    case originalBroadcast = "OriginalBroadcast"
 }
 
 public class OTTRecordingAsset: OTTProgramAsset {

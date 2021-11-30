@@ -19,6 +19,8 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     var config: PhoenixAnalyticsPluginConfig! {
         didSet {
             self.interval = config.timerInterval
+            self.disableMediaHit = config.disableMediaHit
+            self.disableMediaMark = config.disableMediaMark
         }
     }
     
@@ -29,7 +31,6 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             throw PKPluginError.missingPluginConfig(pluginName: PhoenixAnalyticsPlugin.pluginName)
         }
         self.config = config
-        self.interval = config.timerInterval
     }
     
     public override func onUpdateConfig(pluginConfig: Any) {
@@ -72,12 +73,24 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             assetType = type
         }
         
+        if let metadataRecordingId = self.player?.mediaEntry?.metadata, let mediaRecordingId = metadataRecordingId["recordingId"] {
+            mediaId = mediaRecordingId
+        }
+  
+        var epgId: String?
+        if let bookmarkEpgId = config.epgId, !bookmarkEpgId.isEmpty {
+            epgId = bookmarkEpgId
+        } else if let metadataEpgId = self.player?.mediaEntry?.metadata, let mediaEpgId = metadataEpgId["epgId"] {
+            epgId = mediaEpgId
+        }
+        
         guard let requestBuilder: KalturaRequestBuilder = BookmarkService.actionAdd(baseURL: config.baseUrl,
                                                                                     partnerId: config.partnerId,
                                                                                     ks: config.ks,
                                                                                     eventType: type.rawValue.uppercased(),
                                                                                     currentTime: currentTime,
                                                                                     assetId: mediaId ?? "",
+                                                                                    epgId: epgId,
                                                                                     assetType: assetType,
                                                                                     fileId: fileId ?? "") else { return nil }
         
