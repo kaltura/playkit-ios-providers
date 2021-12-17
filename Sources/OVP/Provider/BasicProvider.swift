@@ -12,7 +12,6 @@ import KalturaNetKit
  
     @objc public var sessionProvider: SessionProvider?
     
-    @objc public var uiconfId: NSNumber?
     @objc public var referrer: String?
     public var executor: RequestExecutor?
     
@@ -28,15 +27,6 @@ import KalturaNetKit
     @discardableResult
     @nonobjc public func set(sessionProvider: SessionProvider?) -> Self {
         self.sessionProvider = sessionProvider
-        return self
-    }
-    
-    /**
-     uiconfId - UI Configuration id
-     */
-    @discardableResult
-    @nonobjc public func set(uiconfId: NSNumber?) -> Self {
-        self.uiconfId = uiconfId
         return self
     }
     

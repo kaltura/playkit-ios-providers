@@ -19,7 +19,6 @@ import PlayKit
         var sessionProvider: SessionProvider
         var playlistId: String?
         var mediaAssets: [OVPMediaAsset]?
-        var uiconfId: NSNumber? // ???
         var executor: RequestExecutor
         var apiServerURL: String {
             return self.sessionProvider.serverURL + "/api_v3"
@@ -58,10 +57,9 @@ import PlayKit
         
         //building the loader info which contain all required fields
         let loaderInfo = OVPPlaylistLoaderInfo(sessionProvider: sessionProvider,
-                                            playlistId: self.playlistId,
-                                            mediaAssets: self.mediaAssets,
-                                            uiconfId: self.uiconfId,
-                                            executor: executor ?? KNKRequestExecutor.shared)
+                                               playlistId: self.playlistId,
+                                               mediaAssets: self.mediaAssets,
+                                               executor: executor ?? KNKRequestExecutor.shared)
         
         if let playlistId = self.playlistId, !playlistId.isEmpty {
             self.startLoading(loadInfo: loaderInfo, callback: callback)
@@ -288,6 +286,10 @@ import PlayKit
                         if let error = response as? OVPError {
                             let errorDescription = OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError.localizedDescription
                             PKLog.error("Invalid Entry. Error: \(errorDescription)")
+                            
+                            if let item = OVPEntry(json: ["id": "EMPTY-ID", "name": "Unnamed"]) {
+                                ovpEntryList.append(item)
+                            }
                         }
                     default:
                         break

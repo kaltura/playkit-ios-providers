@@ -18,7 +18,6 @@ import PlayKit
     struct PhoenixPlaylistLoaderInfo {
         var sessionProvider: SessionProvider
         var mediaAssets: [OTTPlaylistAsset]?
-        var uiconfId: NSNumber? // ???
         var executor: RequestExecutor
         var apiServerURL: String {
             return self.sessionProvider.serverURL + ""
@@ -49,7 +48,6 @@ import PlayKit
         //building the loader info which contain all required fields
         let loaderInfo = PhoenixPlaylistLoaderInfo(sessionProvider: sessionProvider,
                                                    mediaAssets: self.mediaAssets,
-                                                   uiconfId: self.uiconfId,
                                                    executor: executor ?? KNKRequestExecutor.shared)
         
         self.startLoadingByIds(loadInfo: loaderInfo, callback: callback)
@@ -137,6 +135,10 @@ import PlayKit
                         if let error = response as? OTTError {
                             let errorDescription = OVPMediaProviderError.serverError(code: error.code ?? "", message: error.message ?? "").asNSError.localizedDescription
                             PKLog.error("Invalid Entry. Error: \(errorDescription)")
+                            
+                            if let item = OTTMediaAsset(json: ["id": "EMPTY-ID", "name": "Unnamed"]) {
+                                ottEntryList.append(item)
+                            }
                         }
                     default:
                         break
@@ -152,10 +154,9 @@ import PlayKit
                 let entries: [PKMediaEntry] = ottEntryList.map {
                     let entry = PKMediaEntry("\($0.id ?? 0)",
                                              sources: nil,
-                                             duration: 0)
+                                             duration: Double($0.mediaFiles.first?.duration ?? 0))
                     
                     entry.name = $0.name
-//                    entry.thumbnailUrl = $0.thumbnailUrl
                     return entry
                 }
                 
