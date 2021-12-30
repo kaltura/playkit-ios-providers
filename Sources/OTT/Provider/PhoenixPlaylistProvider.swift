@@ -34,7 +34,7 @@ import PlayKit
     public func loadPlaylist(callback: @escaping (PKPlaylist?, Error?) -> Void) {
         // session provider is required in order to have the base url and the partner id
         guard let sessionProvider = self.sessionProvider else {
-            PKLog.debug("Proivder must have session info")
+            PKLog.debug("Provider must have session info")
             callback(nil, PhoenixMediaProviderError.invalidInputParam(param: "sessionProvider" ).asNSError )
             return
         }
