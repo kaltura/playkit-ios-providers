@@ -40,7 +40,7 @@ import PlayKit
         }
         
         guard self.mediaAssets != nil else {
-            PKLog.debug("Proivder must have playlistId or mediaAssets")
+            PKLog.debug("Provider must have playlistId or mediaAssets")
             callback(nil, PhoenixMediaProviderError.invalidInputParam(param: "mediaAssets").asNSError)
             return
         }
