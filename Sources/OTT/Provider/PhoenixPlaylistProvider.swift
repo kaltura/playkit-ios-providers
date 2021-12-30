@@ -45,7 +45,7 @@ import PlayKit
             return
         }
         
-        //building the loader info which contain all required fields
+        // Building the loader info which contains all required fields.
         let loaderInfo = PhoenixPlaylistLoaderInfo(sessionProvider: sessionProvider,
                                                    mediaAssets: self.mediaAssets,
                                                    executor: executor ?? KNKRequestExecutor.shared)
