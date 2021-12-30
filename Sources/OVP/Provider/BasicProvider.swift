@@ -30,7 +30,7 @@ import KalturaNetKit
         return self
     }
     
-    /// set the provider referrer
+    /// Set the provider referrer
     ///
     /// - Parameter referrer: the app referrer
     /// - Returns: Self
