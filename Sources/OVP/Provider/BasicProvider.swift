@@ -22,7 +22,7 @@ import KalturaNetKit
     }
     
     /**
-     session provider - which resposible for the ks, prtner id, and base server url
+     session provider - Which is responsible for the ks, partner id, and base server url.
      */
     @discardableResult
     @nonobjc public func set(sessionProvider: SessionProvider?) -> Self {
