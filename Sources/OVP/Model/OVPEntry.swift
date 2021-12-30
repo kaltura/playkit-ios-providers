@@ -28,7 +28,7 @@ class OVPEntry: OVPBaseObject {
     var name: String?
     var type: Int?
     var tags: String?
-    
+    var thumbnailUrl: String?
     
     let idKey = "id"
     let dataURLKey = "dataUrl"
@@ -38,6 +38,7 @@ class OVPEntry: OVPBaseObject {
     let nameKey = "name"
     let typeKey = "type"
     let tagsKey = "tags"
+    let thumbnailUrlKey = "thumbnailUrl"
     
     required init?(json: Any) {
         
@@ -59,6 +60,7 @@ class OVPEntry: OVPBaseObject {
         self.name = jsonObject[nameKey].string
         self.type = jsonObject[typeKey].int
         self.tags = jsonObject[tagsKey].string
+        self.thumbnailUrl = jsonObject[thumbnailUrlKey].string
     }
     
     func entryType() -> EntryType? {

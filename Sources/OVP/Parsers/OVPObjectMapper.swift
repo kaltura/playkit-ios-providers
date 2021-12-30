@@ -41,6 +41,8 @@ class OVPObjectMapper: NSObject {
                 return OVPBaseEntryList.self
             case "KalturaMetadataListResponse":
                 return OVPMetadataList.self
+            case "KalturaPlaylist":
+                return OVPPlaylist.self
             default:
                 return nil
             }

@@ -378,7 +378,7 @@ public enum PhoenixMediaProviderError: PKError {
         let loaderParams = LoaderInfo(sessionProvider: sessionProvider,
                                       assetId: assetId,
                                       assetType: self.toAPIType(type: self.type),
-                                      assetRefType: self.toAPIType(type: self.refType),
+                                      assetRefType: PhoenixMediaProvider.toAPIType(type: self.refType),
                                       playbackContextType: self.toAPIType(type: self.playbackContextType),
                                       formats: self.formats,
                                       fileIds: self.fileIds,
@@ -698,7 +698,7 @@ public enum PhoenixMediaProviderError: PKError {
         }
     }
     
-    func toAPIType(type: AssetReferenceType) -> AssetReferenceTypeAPI? {
+    static func toAPIType(type: AssetReferenceType) -> AssetReferenceTypeAPI? {
         switch type {
         case .media:
             return .media
