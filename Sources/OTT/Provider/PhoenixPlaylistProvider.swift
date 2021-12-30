@@ -61,7 +61,7 @@ import PlayKit
             
             var ks: String
             
-            // checking if we got ks from the session, otherwise we should work as anonymous
+            // Checking if we got ks from the session, otherwise we should work as anonymous.
             if let data = resKS, data.isEmpty == false {
                 ks = data
             } else {
