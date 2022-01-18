@@ -29,6 +29,8 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     
     var disableMediaHit: Bool = false
     var disableMediaMark: Bool = false
+    var isExperimentalLiveMediaHit: Bool = false
+    var isLiveMedia: Bool = false
     
     /************************************************************/
     // MARK: - Private
@@ -40,6 +42,11 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         
         if isHitEvent && disableMediaHit {
             PKLog.info("Media Hit Event Report Blocked")
+            return false
+        }
+        
+        if isHitEvent && self.isLiveMedia && !isExperimentalLiveMediaHit {
+            PKLog.info("Media Hit Event Report Blocked for Live media")
             return false
         }
         
@@ -68,6 +75,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         super.onUpdateMedia(mediaConfig: mediaConfig)
         self.intervalOn = false
         self.isFirstPlay = true
+        self.isLiveMedia = mediaConfig.mediaEntry.mediaType == .live || mediaConfig.mediaEntry.mediaType == .dvrLive
         self.timer?.invalidate()
     }
     
