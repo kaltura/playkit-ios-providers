@@ -29,6 +29,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     
     var disableMediaHit: Bool = false
     var disableMediaMark: Bool = false
+    var isExperimentalLiveMediaHit: Bool = false
     
     /************************************************************/
     // MARK: - Private
@@ -40,6 +41,12 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         
         if isHitEvent && disableMediaHit {
             PKLog.info("Media Hit Event Report Blocked")
+            return false
+        }
+        
+        if let player = self.player,
+           isHitEvent && player.isLive() && !isExperimentalLiveMediaHit {
+            PKLog.info("Media Hit Event Report Blocked for Live media")
             return false
         }
         
