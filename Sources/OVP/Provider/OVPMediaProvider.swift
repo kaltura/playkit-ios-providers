@@ -275,7 +275,6 @@ public enum OVPMediaProviderError: PKError {
                     }
                     
                     guard let baseEntry = ovpBaseEntryList?.objects?.last,
-                        let sources = ovpPlaybackContext?.sources,
                         let metadataList = ovpMetadataList?.objects
                         else {
                             PKLog.debug("Response is not containing entry info or playback data.")
@@ -295,7 +294,9 @@ public enum OVPMediaProviderError: PKError {
                     }
 
                     var mediaSources: [PKMediaSource] = [PKMediaSource]()
-                    sources.forEach { (source: OVPSource) in
+                    
+                    let sources = ovpPlaybackContext?.sources
+                    sources?.forEach { (source: OVPSource) in
                         // Detecting the source type
                         let format = FormatsHelper.getMediaFormat(format: source.format, hasDrm: source.drm != nil)
                         // If source type is not supported, source will not be created
@@ -329,7 +330,20 @@ public enum OVPMediaProviderError: PKError {
                     }
                     
                     let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
-                    let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
+                    var metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
+                    
+                    if let baseEntry = baseEntry as? OVPExternalMediaEntry {
+                        
+                        if let sources = sources,
+                           baseEntry.externalSourceType != "YouTube" && sources.isEmpty {
+                            PKLog.debug("Response is not containing entry info or playback data.")
+                            callback(nil, OVPMediaProviderError.invalidResponse)
+                            return
+                        }
+                        
+                        metaDataItems["externalSourceType"] = baseEntry.externalSourceType
+                        metaDataItems["referenceId"] = baseEntry.referenceId
+                    }
                     
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems

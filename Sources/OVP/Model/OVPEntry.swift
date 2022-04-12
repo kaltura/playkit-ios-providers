@@ -21,6 +21,7 @@ enum EntryType: Int {
 class OVPEntry: OVPBaseObject {
     
     var id: String
+    var referenceId: String?
     var dataURL: URL?
     var mediaType: Int?
     var flavorParamsIds: String?
@@ -31,6 +32,7 @@ class OVPEntry: OVPBaseObject {
     var thumbnailUrl: String?
     
     let idKey = "id"
+    var referenceIdKey = "referenceId"
     let dataURLKey = "dataUrl"
     let mediaTypeKey = "mediaType"
     let flavorParamsIdsKey = "flavorParamsIds"
@@ -61,6 +63,7 @@ class OVPEntry: OVPBaseObject {
         self.type = jsonObject[typeKey].int
         self.tags = jsonObject[tagsKey].string
         self.thumbnailUrl = jsonObject[thumbnailUrlKey].string
+        self.referenceId = jsonObject[referenceIdKey].string
     }
     
     func entryType() -> EntryType? {
