@@ -336,13 +336,19 @@ public enum OVPMediaProviderError: PKError {
                         
                         if let sources = sources,
                            baseEntry.externalSourceType != "YouTube" && sources.isEmpty {
-                            PKLog.debug("Response is not containing entry info or playback data.")
+                            PKLog.debug("Response is not containing playback data.")
                             callback(nil, OVPMediaProviderError.invalidResponse)
                             return
                         }
                         
                         metaDataItems["externalSourceType"] = baseEntry.externalSourceType
                         metaDataItems["referenceId"] = baseEntry.referenceId
+                    } else {
+                        if let sources = sources, sources.isEmpty {
+                            PKLog.debug("Response is not containing playback data.")
+                            callback(nil, OVPMediaProviderError.invalidResponse)
+                            return
+                        }
                     }
                     
                     mediaEntry.name = baseEntry.name
