@@ -20,8 +20,10 @@ class OVPPlaybackContext: OVPBaseObject {
     var actions: [OVPRuleAction] = []
     var messages: [OVPAccessControlMessage] = []
     
-    required internal init?(json: Any)
-    {
+    var playbackCaptions: [OVPCaptions]?
+    
+    required internal init?(json: Any) {
+        
         let jsonObject = JSON(json)
         let flavorAssetsJson = jsonObject[flavorAssetsKey].array
         
@@ -51,6 +53,9 @@ class OVPPlaybackContext: OVPBaseObject {
                 messages.append(message)
             }
         }
+        
+        playbackCaptions = jsonObject["playbackCaptions"].array?.compactMap({ OVPCaptions(json: $0.object) })
+        
     }
     
     func hasErrorMessage() -> OVPAccessControlMessage? {

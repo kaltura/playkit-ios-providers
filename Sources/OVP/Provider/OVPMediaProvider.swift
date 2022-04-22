@@ -331,6 +331,16 @@ public enum OVPMediaProviderError: PKError {
                     let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
                     let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
                     
+                    if let playbackCaptions = ovpPlaybackContext?.playbackCaptions {
+                        mediaEntry.externalSubtitles = playbackCaptions.compactMap({
+                            PKExternalSubtitle(id: $0.description,
+                                               name: $0.label,
+                                               language: $0.languageCode,
+                                               vttURLString: $0.webVttUrl,
+                                               duration: -1)
+                        })
+                    }
+                    
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = baseEntry.tags
