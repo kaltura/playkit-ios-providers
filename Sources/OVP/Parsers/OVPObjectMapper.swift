@@ -43,6 +43,8 @@ class OVPObjectMapper: NSObject {
                 return OVPMetadataList.self
             case "KalturaPlaylist":
                 return OVPPlaylist.self
+            case "KalturaExternalMediaEntry":
+                return OVPExternalMediaEntry.self
             default:
                 return nil
             }
