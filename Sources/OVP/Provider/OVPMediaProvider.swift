@@ -75,6 +75,9 @@ public enum OVPMediaProviderError: PKError {
     @objc public var referenceId: String?
     @objc public var uiconfId: NSNumber?
     @objc public var referrer: String?
+    
+    @objc public var useApiCaptions: Bool = false
+    
     public var executor: RequestExecutor?
     
     @objc public override init() {}
@@ -126,6 +129,16 @@ public enum OVPMediaProviderError: PKError {
     @discardableResult
     @nonobjc public func set(referrer: String?) -> Self {
         self.referrer = referrer
+        return self
+    }
+    
+    /// set the useApiCaptions option to populate Entry external captions.
+    ///
+    /// - Parameter useApiCaptions: Entry captions provided via API.
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(useApiCaptions: Bool) -> Self {
+        self.useApiCaptions = useApiCaptions
         return self
     }
     
@@ -331,7 +344,9 @@ public enum OVPMediaProviderError: PKError {
                     let mediaEntry: PKMediaEntry = PKMediaEntry(baseEntry.id, sources: mediaSources, duration: baseEntry.duration)
                     let metaDataItems = self.getMetadata(metadataList: metadataList, partnerId: partnerId, entryId: mediaEntry.id)
                     
-                    mediaEntry.externalSubtitles = self.createExternalSubtitles(ovpPlaybackContext: ovpPlaybackContext, ks: resKS)
+                    if self.useApiCaptions {
+                        mediaEntry.externalSubtitles = self.createExternalSubtitles(ovpPlaybackContext: ovpPlaybackContext, ks: resKS)
+                    }
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = baseEntry.tags
@@ -451,7 +466,6 @@ public enum OVPMediaProviderError: PKError {
             
             return playbackCaptions.compactMap({
                 var webVttUrl = $0.webVttUrl
-                // if let flavors = mediaSources.flavors, flavors.isEmpty {
                 if let ks = ks, !ks.isEmpty,
                    let url = URL(string: $0.webVttUrl) {
                     
