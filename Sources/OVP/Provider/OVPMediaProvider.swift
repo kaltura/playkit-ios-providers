@@ -75,6 +75,9 @@ public enum OVPMediaProviderError: PKError {
     @objc public var referenceId: String?
     @objc public var uiconfId: NSNumber?
     @objc public var referrer: String?
+    
+    @objc public var useApiCaptions: Bool = false
+    
     public var executor: RequestExecutor?
     
     @objc public override init() {}
@@ -126,6 +129,16 @@ public enum OVPMediaProviderError: PKError {
     @discardableResult
     @nonobjc public func set(referrer: String?) -> Self {
         self.referrer = referrer
+        return self
+    }
+    
+    /// set the useApiCaptions option to populate Entry external captions.
+    ///
+    /// - Parameter useApiCaptions: Entry captions provided via API.
+    /// - Returns: Self
+    @discardableResult
+    @nonobjc public func set(useApiCaptions: Bool) -> Self {
+        self.useApiCaptions = useApiCaptions
         return self
     }
     
@@ -351,6 +364,9 @@ public enum OVPMediaProviderError: PKError {
                         }
                     }
                     
+                    if self.useApiCaptions {
+                        mediaEntry.externalSubtitles = self.createExternalSubtitles(ovpPlaybackContext: ovpPlaybackContext, ks: resKS)
+                    }
                     mediaEntry.name = baseEntry.name
                     mediaEntry.metadata = metaDataItems
                     mediaEntry.tags = baseEntry.tags
@@ -462,6 +478,40 @@ public enum OVPMediaProviderError: PKError {
         }
         
         return playURL
+    }
+    
+    private func createExternalSubtitles(ovpPlaybackContext context: OVPPlaybackContext?, ks: String?) -> [PKExternalSubtitle]? {
+        
+        if let playbackCaptions = context?.playbackCaptions {
+            
+            return playbackCaptions.compactMap({
+                var webVttUrl = $0.webVttUrl
+                if let ks = ks, !ks.isEmpty,
+                   let url = URL(string: $0.webVttUrl) {
+                    
+                    if url.query == nil {
+                        let lastPathComponent = url.lastPathComponent
+                        
+                        webVttUrl = url
+                            .deletingLastPathComponent()
+                            .appendingPathComponent("ks")
+                            .appendingPathComponent(ks)
+                            .appendingPathComponent(lastPathComponent)
+                            .absoluteString
+                    } else {
+                        webVttUrl = url.appendingQueryComponent(key: "ks", value: ks).absoluteString
+                    }
+                }
+                
+                return PKExternalSubtitle(id: $0.description,
+                                          name: $0.label,
+                                          language: $0.languageCode,
+                                          vttURLString: webVttUrl,
+                                          duration: -1)
+            })
+        }
+        
+        return nil
     }
     
     private func mediaType(of type: EntryType?) -> MediaType {
