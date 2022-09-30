@@ -43,6 +43,7 @@ enum AssetReferenceTypeAPI: Int, CustomStringConvertible {
 
 enum PlaybackTypeAPI: Int, CustomStringConvertible {
     
+    case download
     case trailer
     case catchup
     case startOver
@@ -50,6 +51,7 @@ enum PlaybackTypeAPI: Int, CustomStringConvertible {
     
     var description: String {
         switch self {
+        case .download: return "DOWNLOAD"
         case .trailer: return "TRAILER"
         case .catchup: return "CATCHUP"
         case .startOver: return "START_OVER"

@@ -74,6 +74,11 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
             assetType = type
         }
         
+        var contextType = ""
+        if let metadata = self.player?.mediaEntry?.metadata, let cType = metadata["contextType"] {
+            contextType = cType
+        }
+        
         if let metadataRecordingId = self.player?.mediaEntry?.metadata, let mediaRecordingId = metadataRecordingId["recordingId"] {
             mediaId = mediaRecordingId
         }
@@ -93,6 +98,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                                                                                     assetId: mediaId ?? "",
                                                                                     epgId: epgId,
                                                                                     assetType: assetType,
+                                                                                    contextType: contextType,
                                                                                     fileId: fileId ?? "") else { return nil }
         
         requestBuilder.set { (response: Response) in
