@@ -72,6 +72,7 @@ import PlayKit
 
 @objc public enum PlaybackContextType: Int, CustomStringConvertible {
     
+    case download
     case trailer
     case catchup
     case startOver
@@ -80,6 +81,7 @@ import PlayKit
     
     public var description: String {
         switch self {
+        case .download: return "DOWNLOAD"
         case .trailer: return "TRAILER"
         case .catchup: return "CATCHUP"
         case .startOver: return "START_OVER"
@@ -350,7 +352,7 @@ public enum PhoenixMediaProviderError: PKError {
         
         if self.type == .unset {
             switch self.playbackContextType {
-            case .unset, .playback, .trailer:
+            case .unset, .playback, .trailer, .download:
                 self.type = .media
             case .startOver, .catchup:
                 self.type = .epg
@@ -658,6 +660,8 @@ public enum PhoenixMediaProviderError: PKError {
             metadata["assetType"] = AssetType(type).description
         }
         
+        metadata["contextType"] = loaderInfo.playbackContextType.description
+        
         // Add entryId to the metadata
         if let entryId = asset?.entryId {
             metadata["entryId"] = entryId
@@ -712,6 +716,8 @@ public enum PhoenixMediaProviderError: PKError {
     
     func toAPIType(type: PlaybackContextType) -> PlaybackTypeAPI {
         switch type {
+        case .download:
+            return .download
         case .catchup:
             return .catchup
         case .playback:

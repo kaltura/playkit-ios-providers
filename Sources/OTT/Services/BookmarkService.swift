@@ -22,24 +22,40 @@ internal class BookmarkService {
                                    assetId: String,
                                    epgId: String?,
                                    assetType: String,
+                                   contextType: String,
                                    fileId: String) -> KalturaRequestBuilder? {
+        
+        let bookmark = createBookmark(eventType: eventType,
+                                      position: currentTime,
+                                      assetId: assetId,
+                                      epgId: epgId,
+                                      assetType: assetType,
+                                      contextType: contextType,
+                                      fileId: fileId)
         
         if let request: KalturaRequestBuilder = KalturaRequestBuilder(url: baseURL, service: "bookmark", action: "add") {
             request
                 .setOTTBasicParams()
                 .set(method: .post)
                 .setBody(key: "ks", value: JSON(ks))
-                .setBody(key: "bookmark",
-                         value: createBookmark(eventType: eventType, position: currentTime, assetId: assetId, epgId: epgId, assetType: assetType, fileId: fileId))
+                .setBody(key: "bookmark", value: bookmark)
             return request
         } else {
             return nil
         }
     }
-
-    private static func createBookmark(eventType: String, position: Int32, assetId: String, epgId: String? = nil, assetType: String, fileId: String) -> JSON {
+    
+    private static func createBookmark(eventType: String,
+                                       position: Int32,
+                                       assetId: String,
+                                       epgId: String? = nil,
+                                       assetType: String,
+                                       contextType: String,
+                                       fileId: String) -> JSON {
+        
         var json: JSON = JSON.init(["objectType": "KalturaBookmark"])
         json["type"] = JSON(assetType)
+        json["context"] = JSON(contextType)
         json["id"] = JSON(assetId)
         if let epgId = epgId, !epgId.isEmpty {
             json["programId"] = JSON(epgId)
