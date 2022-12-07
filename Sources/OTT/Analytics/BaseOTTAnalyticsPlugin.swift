@@ -181,9 +181,10 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
                     
                     if self.isFirstPlay {
                         self.isFirstPlay = false
-                        self.sendAnalyticsEvent(ofType: .first_play);
+                        self.sendAnalyticsEvent(ofType: .first_play)
+                        self.sendAnalyticsEvent(ofType: .play)
                     } else {
-                        self.sendAnalyticsEvent(ofType: .play);
+                        self.sendAnalyticsEvent(ofType: .play)
                     }
                 }
             case let e where e.self == PlayerEvent.sourceSelected:
