@@ -5,6 +5,8 @@
 //  Created by Nilit Danan on 11/17/20.
 //
 
+import Foundation
+
 public let ProviderServerErrorCodeKey: String = "code"
 public let ProviderServerErrorMessageKey: String = "message"
 
