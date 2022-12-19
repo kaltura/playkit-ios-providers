@@ -11,7 +11,10 @@
 import Foundation
 import KalturaNetKit
 import PlayKit
-import AnalyticsCommon
+
+#if canImport(AnalyticsCommon)
+    import AnalyticsCommon
+#endif
 
 enum OTTAnalyticsEventType: String {
     case hit
