@@ -19,17 +19,22 @@ import Foundation
     var isExperimentalLiveMediaHit: Bool = false
     var epgId: String?
     
+    public var forceConcurrencyOnUnpaidContent: Bool = false
+    
     init(baseUrl: String,
          timerInterval: TimeInterval,
          disableMediaHit: Bool = false,
          disableMediaMark: Bool = false,
          isExperimentalLiveMediaHit: Bool = false,
-         epgId: String? = nil) {
+         epgId: String? = nil,
+         forceConcurrencyOnUnpaidContent: Bool? = false) {
         self.baseUrl = baseUrl
         self.timerInterval = timerInterval
         self.disableMediaHit = disableMediaHit
         self.disableMediaMark = disableMediaMark
         self.isExperimentalLiveMediaHit = isExperimentalLiveMediaHit
         self.epgId = epgId
+        
+        self.forceConcurrencyOnUnpaidContent = forceConcurrencyOnUnpaidContent ?? false
     }
 }
