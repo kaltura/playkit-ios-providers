@@ -34,7 +34,6 @@ import Foundation
         self.disableMediaMark = disableMediaMark
         self.isExperimentalLiveMediaHit = isExperimentalLiveMediaHit
         self.epgId = epgId
-        
         self.forceConcurrencyOnUnpaidContent = forceConcurrencyOnUnpaidContent ?? false
     }
 }
