@@ -32,8 +32,8 @@ jobs:
 
   SPM:
       name: "Build SPM"
-      environment: PR
       runs-on: macos-latest
+      
       strategy:
         fail-fast: false
         matrix:
