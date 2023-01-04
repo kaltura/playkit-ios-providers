@@ -7,8 +7,9 @@ jobs:
 
   SPM:
       name: "Build SPM"
-      environment: PR
+      environment: Tag
       runs-on: macos-latest
+
       strategy:
         fail-fast: false
         matrix:
@@ -28,6 +29,7 @@ jobs:
     runs-on: macos-latest
     environment: Tag
     needs: SPM
+    
     outputs:
       output1: ${{ steps.tagging.outputs.tag }}
         
