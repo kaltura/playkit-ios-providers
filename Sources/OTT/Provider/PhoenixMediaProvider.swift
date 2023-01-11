@@ -656,10 +656,7 @@ public enum PhoenixMediaProviderError: PKError {
             metadata["epgId"] = programAsset.epgId
         }
         
-        if let type = asset?.type {
-            metadata["assetType"] = AssetType(type).description
-        }
-        
+        metadata["assetType"] = loaderInfo.assetType.description
         metadata["contextType"] = loaderInfo.playbackContextType.description
         
         // Add entryId to the metadata
