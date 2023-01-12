@@ -10,12 +10,6 @@ let package = Package(
                         targets: ["PlayKitProviders"])],
     dependencies: [
         .package(url: "https://github.com/yahoojapan/SwiftyXMLParser.git", from: "5.0.0"),
-        .package(name: "PlayKitUtils",
-                 url: "https://github.com/kaltura/playkit-ios-utils.git",
-                 .branch("FEC-12640")),
-        .package(name: "KalturaNetKit",
-                 url: "https://github.com/kaltura/netkit-ios.git",
-                 .branch("FEC-12640")),
         .package(name: "PlayKit",
                  url: "https://github.com/kaltura/playkit-ios.git",
                  .branch("FEC-12640")),
@@ -24,8 +18,6 @@ let package = Package(
                       dependencies: [
                         "SwiftyXMLParser",
                         .product(name: "AnalyticsCommon", package: "PlayKit"),
-                        .product(name: "KalturaNetKit", package: "KalturaNetKit"),
-                        .product(name: "PlayKitUtils", package: "PlayKitUtils"),
                       ],
                       path: "Sources/")
     ]
