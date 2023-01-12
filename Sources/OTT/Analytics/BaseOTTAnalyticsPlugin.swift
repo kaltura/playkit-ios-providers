@@ -32,6 +32,8 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     var disableMediaMark: Bool = false
     var isExperimentalLiveMediaHit: Bool = false
     
+    var forceConcurrencyOnUnpaidContent: Bool = false
+    
     /************************************************************/
     // MARK: - Private
     /************************************************************/
@@ -65,6 +67,11 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     
     public required init(player: Player, pluginConfig: Any?, messageBus: MessageBus) throws {
         try super.init(player: player, pluginConfig: pluginConfig, messageBus: messageBus)
+        
+        if let config = pluginConfig as? OTTAnalyticsPluginConfig {
+            self.forceConcurrencyOnUnpaidContent = config.forceConcurrencyOnUnpaidContent
+        }
+        
         AppStateSubject.shared.add(observer: self)
         self.periodicObserverUUID = self.player?.addPeriodicObserver(interval: 1.0, observeOn: DispatchQueue.main, using: { (time) in
             self.lastPosition = time.toInt32()
@@ -182,9 +189,13 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
                     
                     if self.isFirstPlay {
                         self.isFirstPlay = false
-                        self.sendAnalyticsEvent(ofType: .first_play);
+                        self.sendAnalyticsEvent(ofType: .first_play)
+                        
+                        if self.forceConcurrencyOnUnpaidContent {
+                            self.sendAnalyticsEvent(ofType: .play)
+                        }
                     } else {
-                        self.sendAnalyticsEvent(ofType: .play);
+                        self.sendAnalyticsEvent(ofType: .play)
                     }
                 }
             case let e where e.self == PlayerEvent.sourceSelected:
