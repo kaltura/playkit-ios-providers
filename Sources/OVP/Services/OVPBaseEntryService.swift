@@ -15,7 +15,11 @@ import KalturaNetKit
 
 class OVPBaseEntryService {
 
-    internal static func list(baseURL: String, ks: String, entryID: String?, referenceId: String?) -> KalturaRequestBuilder? {
+    internal static func list(baseURL: String,
+                              ks: String,
+                              entryID: String?,
+                              referenceId: String?,
+                              redirectFromEntryId: Bool) -> KalturaRequestBuilder? {
         if let request: KalturaRequestBuilder = KalturaRequestBuilder(url: baseURL, service: "baseEntry", action: "list") {
             let responseProfile = ["fields": "mediaType,dataUrl,id,name,duration,msDuration,flavorParamsIds,tags,dvrStatus,thumbnailUrl,referenceId,description,externalSourceType,status",
                                    "type": 1] as [String: Any]
@@ -23,7 +27,11 @@ class OVPBaseEntryService {
                 .setBody(key: "responseProfile", value: JSON(responseProfile))
                 
             if let entryID = entryID {
-                request.setBody(key: "filter:redirectFromEntryId", value: JSON(entryID))
+                if redirectFromEntryId {
+                    request.setBody(key: "filter:redirectFromEntryId", value: JSON(entryID))
+                } else {
+                    request.setBody(key: "filter:idEqual", value: JSON(entryID))
+                }
             } else if let referenceId = referenceId {
                 request.setBody(key: "filter:referenceIdEqual", value: JSON(referenceId))
             }

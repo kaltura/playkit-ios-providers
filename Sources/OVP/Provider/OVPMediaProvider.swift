@@ -68,6 +68,7 @@ public enum OVPMediaProviderError: PKError {
         var apiServerURL: String {
             return self.sessionProvider.serverURL + "/api_v3"
         }
+        var redirectFromEntryId: Bool = true
     }
     
     @objc public var sessionProvider: SessionProvider?
@@ -75,6 +76,8 @@ public enum OVPMediaProviderError: PKError {
     @objc public var referenceId: String?
     @objc public var uiconfId: NSNumber?
     @objc public var referrer: String?
+    
+    @objc public var redirectFromEntryId: Bool = true
     
     @objc public var useApiCaptions: Bool = false
     
@@ -151,6 +154,12 @@ public enum OVPMediaProviderError: PKError {
         return self
     }
     
+    @discardableResult
+    @nonobjc public func set(redirectFromEntryId: Bool) -> Self {
+        self.redirectFromEntryId = redirectFromEntryId
+        return self
+    }
+    
     @objc public func loadMedia(callback: @escaping (PKMediaEntry?, Error?) -> Void) {
         
         // session provider is required in order to have the base url and the partner id
@@ -172,7 +181,8 @@ public enum OVPMediaProviderError: PKError {
                                     entryId: self.entryId,
                                     referenceId: self.referenceId,
                                     uiconfId: self.uiconfId,
-                                    executor: executor ?? KNKRequestExecutor.shared)
+                                    executor: executor ?? KNKRequestExecutor.shared,
+                                    redirectFromEntryId: self.redirectFromEntryId)
         
         self.startLoading(loadInfo: loaderInfo, callback: callback)
     }
@@ -214,7 +224,8 @@ public enum OVPMediaProviderError: PKError {
             let listRequest = OVPBaseEntryService.list(baseURL: loadInfo.apiServerURL,
                                                        ks: token,
                                                        entryID: loadInfo.entryId,
-                                                       referenceId: loadInfo.referenceId)
+                                                       referenceId: loadInfo.referenceId,
+                                                       redirectFromEntryId: loadInfo.redirectFromEntryId)
             
             // Request for Entry playback data in order to build sources to play
             let getPlaybackContext =  OVPBaseEntryService.getPlaybackContext(baseURL: loadInfo.apiServerURL,

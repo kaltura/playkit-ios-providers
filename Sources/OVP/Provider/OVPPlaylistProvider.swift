@@ -242,7 +242,8 @@ import PlayKit
                 if let request = OVPBaseEntryService.list(baseURL: loadInfo.apiServerURL,
                                                           ks: token,
                                                           entryID: asset.id,
-                                                          referenceId: asset.referenceId) {
+                                                          referenceId: asset.referenceId,
+                                                          redirectFromEntryId: asset.redirectFromEntryId) {
                     mrb?.add(request: request)
                 }
             }
@@ -342,9 +343,14 @@ import PlayKit
     var id: String?
     var referenceId: String?
     
-    public init(id: String? = nil, referenceId: String? = nil) {
+    var redirectFromEntryId: Bool = true
+    
+    public init(id: String? = nil,
+                referenceId: String? = nil,
+                redirectFromEntryId: Bool? = nil) {
         self.id = id
         self.referenceId = referenceId
+        self.redirectFromEntryId = redirectFromEntryId ?? true
     }
     
 }
