@@ -350,7 +350,7 @@ import PlayKit
                 redirectFromEntryId: Bool? = nil) {
         self.id = id
         self.referenceId = referenceId
-        self.redirectFromEntryId = redirectFromEntryId ?? false
+        self.redirectFromEntryId = redirectFromEntryId ?? true
     }
     
 }
