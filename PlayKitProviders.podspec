@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   
   s.dependency 'PlayKit/AnalyticsCommon', '~> 3.27'
     
-  s.dependency 'KalturaNetKit', '~> 1.5'
+  s.dependency 'KalturaNetKit', '~> 1.6.1'
   s.dependency 'PlayKitUtils', '~> 0.5'
   s.dependency 'SwiftyXMLParser', '5.0.0'
 end

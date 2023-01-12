@@ -9,6 +9,7 @@
 // ===================================================================================================
 
 import Foundation
+import UIKit
 import KalturaNetKit
 import PlayKitUtils
 import PlayKit
