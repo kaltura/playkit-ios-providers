@@ -86,7 +86,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         var epgId: String?
         if let bookmarkEpgId = config.epgId, !bookmarkEpgId.isEmpty {
             epgId = bookmarkEpgId
-        } else if let metadataEpgId = self.player?.mediaEntry?.metadata, let mediaEpgId = metadataEpgId["epgId"] {
+        } else if let metadataEpgId = self.player?.mediaEntry?.metadata, let _ = metadataEpgId["epgId"] {
             epgId = mediaId
         }
         
