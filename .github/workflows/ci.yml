@@ -19,7 +19,7 @@ concurrency:
 jobs:
   build:
     name: "CocoaPods linting"
-    runs-on: macos-latest
+    runs-on: macOS-12
 
     steps:
     - uses: actions/checkout@v3
@@ -32,13 +32,13 @@ jobs:
 
   SPM:
       name: "Build SPM"
-      runs-on: macos-latest
+      runs-on: macOS-12
       
       strategy:
         fail-fast: false
         matrix:
           include:
-            - destination: "OS=16.0,name=iPhone 14 Pro"
+            - destination: "OS=16.2,name=iPhone 14 Pro"
               name: "iOS"
               scheme: "PlayKitProviders"
             - destination: "OS=16.0,name=Apple TV"

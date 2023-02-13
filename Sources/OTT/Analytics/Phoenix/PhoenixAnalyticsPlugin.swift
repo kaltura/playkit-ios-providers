@@ -86,8 +86,8 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         var epgId: String?
         if let bookmarkEpgId = config.epgId, !bookmarkEpgId.isEmpty {
             epgId = bookmarkEpgId
-        } else if let metadataEpgId = self.player?.mediaEntry?.metadata, let mediaEpgId = metadataEpgId["epgId"] {
-            epgId = mediaEpgId
+        } else if let metadataEpgId = self.player?.mediaEntry?.metadata, let _ = metadataEpgId["epgId"] {
+            epgId = mediaId
         }
         
         guard let requestBuilder: KalturaRequestBuilder = BookmarkService.actionAdd(baseURL: config.baseUrl,
