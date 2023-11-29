@@ -1,7 +1,7 @@
 // ===================================================================================================
 // Copyright (C) 2017 Kaltura Inc.
 //
-// Licensed under the AGPLv3 license, unless a different license for a 
+// Licensed under the AGPLv3 license, unless a different license for a
 // particular library is specified in the applicable library path.
 //
 // You may obtain a copy of the License at
@@ -37,7 +37,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     /************************************************************/
     // MARK: - Private
     /************************************************************/
-
+    
     private func shouldSendAnalyticsEvent(ofType type: OTTAnalyticsEventType) -> Bool {
         
         let isHitEvent: Bool = type == .hit
@@ -70,6 +70,9 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         
         if let config = pluginConfig as? OTTAnalyticsPluginConfig {
             self.forceConcurrencyOnUnpaidContent = config.forceConcurrencyOnUnpaidContent
+            self.isExperimentalLiveMediaHit = config.isExperimentalLiveMediaHit
+            self.disableMediaHit = config.disableMediaHit
+            self.disableMediaMark = config.disableMediaMark
         }
         
         AppStateSubject.shared.add(observer: self)
@@ -78,7 +81,7 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
         })
         self.registerEvents()
     }
-
+    
     public override func onUpdateMedia(mediaConfig: MediaConfig) {
         super.onUpdateMedia(mediaConfig: mediaConfig)
         self.intervalOn = false
