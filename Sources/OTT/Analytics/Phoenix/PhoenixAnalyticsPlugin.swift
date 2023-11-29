@@ -102,7 +102,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                                                                                     fileId: fileId ?? "") else { return nil }
         
         requestBuilder.set { (response: Response) in
-            PKLog.debug("bookmark - \(type.rawValue.uppercased())\nResponse: \(response)")
+            PKLog.debug("Analytics Bookmark - \(type.rawValue.uppercased()) Response: \(response)")
             if response.statusCode == 0 {
                 PKLog.verbose("\(String(describing: response.data))")
                 guard let data = response.data as? [String: Any] else { return }
