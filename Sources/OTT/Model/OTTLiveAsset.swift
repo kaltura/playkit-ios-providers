@@ -9,7 +9,7 @@
 // ===================================================================================================
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 fileprivate let enableTrickPlayKey = "enableTrickPlay"
 

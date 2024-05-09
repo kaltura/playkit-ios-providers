@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 enum OTTRuleActionType: String {
     case block = "BLOCK"

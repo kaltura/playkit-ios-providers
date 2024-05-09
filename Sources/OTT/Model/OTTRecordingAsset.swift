@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 fileprivate let recordingIdKey = "recordingId"
 fileprivate let recordingTypeKey = "recordingType"

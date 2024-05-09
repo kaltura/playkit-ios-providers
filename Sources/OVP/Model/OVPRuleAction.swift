@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 import PlayKit
 
 enum OVPRuleActionType: Int {

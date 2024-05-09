@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 class OVPBaseEntryList: OVPBaseObject {
     

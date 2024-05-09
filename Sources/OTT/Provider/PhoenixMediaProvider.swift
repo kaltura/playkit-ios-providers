@@ -19,7 +19,7 @@
 // ===================================================================================================
 
 import UIKit
-import SwiftyJSON
+import kSwiftyJSON
 import KalturaNetKit
 import PlayKit
 

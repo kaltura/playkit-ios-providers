@@ -5,7 +5,7 @@ suffix = '.0000'   # Dev mode
 Pod::Spec.new do |s|
   
   s.name             = 'PlayKitProviders'
-  s.version          = '1.18.3' + suffix
+  s.version          = '1.19.0' + suffix
   s.summary          = 'PlayKitProviders -- Providers framework for iOS'
   s.homepage         = 'https://github.com/kaltura/playkit-ios-providers'
   s.license          = { :type => 'AGPLv3', :file => 'LICENSE' }
@@ -13,15 +13,15 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/kaltura/playkit-ios-providers.git', :tag => 'v' + s.version.to_s }
   s.swift_version     = '5.0'
 
-  s.ios.deployment_target = '9.0'
-  s.tvos.deployment_target = '9.0'
+  s.ios.deployment_target = '15.0'
+  s.tvos.deployment_target = '15.0'
 
   s.source_files = 'Sources/**/*'
   
-  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.27'
+  s.dependency 'PlayKit/AnalyticsCommon', '~> 3.30'
     
-  s.dependency 'KalturaNetKit', '~> 1.6.1'
-  s.dependency 'PlayKitUtils', '~> 0.5'
-  s.dependency 'SwiftyXMLParser', '5.0.0'
+  s.dependency 'KalturaNetKit', '~> 1.7.0'
+  s.dependency 'PlayKitUtils', '~> 0.7'
+  s.dependency 'SwiftyXMLParser', '5.6.0'
 end
 

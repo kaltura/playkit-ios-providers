@@ -16,7 +16,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 fileprivate let idKey = "id"
 fileprivate let typeKey = "type"

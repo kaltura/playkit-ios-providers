@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 class OTTBooleanValue: OTTBaseObject {
     

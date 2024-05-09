@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 fileprivate let epgChannelIdKey = "epgChannelId"
 fileprivate let epgIdKey = "epgId"

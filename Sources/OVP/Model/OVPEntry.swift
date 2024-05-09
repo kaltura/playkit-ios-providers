@@ -9,7 +9,7 @@
 // ===================================================================================================
 
 import UIKit
-import SwiftyJSON
+import kSwiftyJSON
 
 enum EntryType: Int {
     case Automatic = -1

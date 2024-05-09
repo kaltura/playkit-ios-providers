@@ -9,7 +9,7 @@
 // ===================================================================================================
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 public class OTTPlaybackContext: OTTBaseObject {
 

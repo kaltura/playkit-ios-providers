@@ -16,7 +16,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 class OTTMediaFile: OTTBaseObject {
     

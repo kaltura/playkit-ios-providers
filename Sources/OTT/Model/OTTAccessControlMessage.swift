@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 class OTTAccessControlMessage: OTTBaseObject {
     var message: String? = nil

@@ -21,7 +21,7 @@
 //},
 
 import UIKit
-import SwiftyJSON
+import kSwiftyJSON
 
 class OVPError: OVPBaseObject {
     

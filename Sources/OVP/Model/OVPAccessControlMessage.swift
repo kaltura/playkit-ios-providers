@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import kSwiftyJSON
 
 class OVPAccessControlMessage: OVPBaseObject {
     var message: String? = nil
